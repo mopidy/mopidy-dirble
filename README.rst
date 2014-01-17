@@ -37,6 +37,7 @@ Mopidy-Dirble to your Mopidy configuration file::
 
     [dirble]
     api_key = a4c8107f8fe57c235ce48df846720b9c816e8584
+    timeout = 5000
 
 
 Project resources
@@ -54,3 +55,4 @@ v0.1.0 (UNRELEASED)
 ----------------------------------------
 
 - Initial release.
+- Provides basic hierarchy based browsing of Dirble categories and sub-categories.
