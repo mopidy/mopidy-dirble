@@ -20,6 +20,7 @@ class DirbleBackend(pykka.ThreadingActor, backend.Backend):
         self.dirble = client.Dirble(config['dirble']['api_key'],
                                     config['dirble']['timeout'])
         self.library = DirbleLibrary(backend=self)
+        self.playback = DirblePlayback(audio=audio, backend=self)
 
 
 class DirbleLibrary(backend.LibraryProvider):
@@ -64,3 +65,13 @@ class DirbleLibrary(backend.LibraryProvider):
 
     def search(self, query=None, uris=None):
         return None
+
+
+class DirblePlayback(backend.PlaybackProvider):
+    def change_track(self, track):
+        variant, identifier = translator.parse_uri(track.uri)
+        if variant != 'station':
+            return False
+        station = self.backend.dirble.station(identifier)
+        track = track.copy(uri=station['streamurl'])
+        return super(DirblePlayback, self).change_track(track)
