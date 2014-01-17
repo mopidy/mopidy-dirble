@@ -45,6 +45,7 @@ class DirbleLibrary(backend.LibraryProvider):
             for station in self.backend.dirble.stations(identifier):
                 result.append(translator.station_to_ref(station))
 
+        result.sort(key=lambda ref: ref.name)
         return result
 
     def refresh(self, uri=None):

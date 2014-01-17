@@ -17,11 +17,10 @@ def parse_uri(uri):
 
 
 def station_to_ref(station):
-    name = station.get('name', station['streamurl'])
-    if station.get('country'):
-        name += ' (%s)' % station['country']
+    name = station.get('name', station['streamurl']).strip()
+    country = station.get('country', '??')
     uri = unparse_uri(b'station', station['id'])
-    return Ref.track(uri=uri, name=name)
+    return Ref.track(uri=uri, name='%s - %s' % (country, name))
 
 
 def category_to_ref(category, primary=True):
