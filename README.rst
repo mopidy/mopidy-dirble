@@ -10,12 +10,12 @@ Mopidy-Dirble
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/adamcik/mopidy-dirble.png?branch=master
-    :target: https://travis-ci.org/adamcik/mopidy-dirble
+.. image:: https://travis-ci.org/mopidy/mopidy-dirble.png?branch=master
+    :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
 
-.. image:: https://coveralls.io/repos/adamcik/mopidy-dirble/badge.png?branch=master
-   :target: https://coveralls.io/r/adamcik/mopidy-dirble?branch=master
+.. image:: https://coveralls.io/repos/mopidy/mopidy-dirble/badge.png?branch=master
+   :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=master
    :alt: Test coverage
 
 Mopidy extension for Dirble open radio directory
@@ -43,9 +43,9 @@ Mopidy-Dirble to your Mopidy configuration file::
 Project resources
 =================
 
-- `Source code <https://github.com/adamcik/mopidy-dirble>`_
-- `Issue tracker <https://github.com/adamcik/mopidy-dirble/issues>`_
-- `Download development snapshot <https://github.com/adamcik/mopidy-dirble/tarball/master#egg=Mopidy-Dirble-dev>`_
+- `Source code <https://github.com/mopidy/mopidy-dirble>`_
+- `Issue tracker <https://github.com/mopidy/mopidy-dirble/issues>`_
+- `Download development snapshot <https://github.com/mopidy/mopidy-dirble/tarball/master#egg=Mopidy-Dirble-dev>`_
 
 
 Changelog
