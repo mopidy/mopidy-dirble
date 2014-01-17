@@ -13,7 +13,7 @@ def get_version(filename):
 setup(
     name='Mopidy-Dirble',
     version=get_version('mopidy_dirble/__init__.py'),
-    url='https://github.com/adamcik/mopidy-dirble',
+    url='https://github.com/mopidy/mopidy-dirble',
     license='Apache License, Version 2.0',
     author='Thomas Adamcik',
     author_email='thomas@adamcik.no',
