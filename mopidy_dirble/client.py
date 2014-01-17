@@ -1,0 +1,89 @@
+from __future__ import unicode_literals
+
+import json
+import logging
+import time
+import urllib2
+
+logger = logging.getLogger(__name__)
+
+
+class Dirble(object):
+    """Light wrapper for Dirble API lookup.
+
+    Important things to note:
+    - The client will do exponential back off when requests fail or timeout.
+    - The client will cache results aggressively.
+    - Failed requests will return an empty default type appropriate for the
+      lookup in question, normally a empty dict or list.
+    - The data returned comes direct from the API's JSON.
+    - For stations, only the minimal data set returned by station lists is
+      guaranteed to be there.
+    """
+    def __init__(self, api_key, timeout):
+        self._base_uri = 'http://dirble.com/dirapi/%s/apikey/' + api_key
+        self._cache = {}
+        self._stations = {}
+        self._timeout = timeout / 1000.0
+        self._backoff_until = time.time()
+        self._backoff_max = 60
+        self._backoff = 1
+
+    def flush(self):
+        self._cache = {}
+        self._stations = {}
+
+    def categories(self):
+        uri = self._base_uri % 'primaryCategories'
+        return self._fetch(uri, [])
+
+    def sub_categories(self, id):
+        uri = (self._base_uri + '/primaryid/%s') % ('childCategories', id)
+        return self._fetch(uri, [])
+
+    def stations(self, id):
+        uri = (self._base_uri + '/id/%s') % ('stations', id)
+        stations = self._fetch(uri, [])
+        for station in stations:
+            self._stations.setdefault(station['id'], station)
+        return stations
+
+    def station(self, id):
+        id = int(id)  # Ensure we are consistent for cache key.
+        if id in self._stations:
+            return self._stations[id]
+        uri = (self._base_uri + '/id/%s') % ('station', id)
+        station = self._fetch(uri, {})
+        if station:
+            self._stations.setdefault(station['id'], station)
+        return station
+
+    def _fetch(self, uri, default):
+        if uri in self._cache:
+            logger.debug('Cache hit: %s', uri)
+            return self._cache[uri]
+
+        if time.time() < self._backoff_until:
+            logger.debug('Back off fallack used: %s', uri)
+            return default
+
+        logger.debug('Fetching: %s', uri)
+        try:
+            fp = urllib2.urlopen(uri, timeout=self._timeout)
+            data = json.load(fp)
+            self._cache[uri] = data
+            self._backoff = 1
+            return data
+        except urllib2.HTTPError as e:
+            logger.debug('Fetch failed, HTTP %s: %s', e.code, e.reason)
+            if e.code == 404:
+                return default  # Place marker in cache?
+        except IOError as e:
+            logger.debug('Fetch failed: %s', e)
+        except ValueError as e:
+            logger.warning('Fetch failed: %s', e)
+
+        self._backoff = min(self._backoff_max, self._backoff*2)
+        self._backoff_until = time.time() + self._backoff
+        logger.debug('Entering back off mode for %d seconds.', self._backoff)
+        return default
