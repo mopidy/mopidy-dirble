@@ -34,37 +34,37 @@ class Dirble(object):
         self._stations = {}
 
     def categories(self):
-        uri = self._base_uri % 'primaryCategories'
-        return self._fetch(uri, [])
+        return self._fetch('primaryCategories', '', [])
 
-    def sub_categories(self, id):
-        uri = (self._base_uri + '/primaryid/%s') % ('childCategories', id)
-        return self._fetch(uri, [])
+    def sub_categories(self, category):
+        path = '/primaryid/%s' % category
+        return self._fetch('childCategories', path, [])
 
-    def stations(self, id):
-        uri = (self._base_uri + '/id/%s') % ('stations', id)
-        stations = self._fetch(uri, [])
+    def stations(self, category):
+        path = '/id/%s' % category
+        stations = self._fetch('stations', path, [])
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
 
-    def station(self, id):
-        id = int(id)  # Ensure we are consistent for cache key.
-        if id in self._stations:
-            return self._stations[id]
-        uri = (self._base_uri + '/id/%s') % ('station', id)
-        station = self._fetch(uri, {})
+    def station(self, identifier):
+        identifier = int(identifier)  # Ensure we are consistent for cache key.
+        if identifier in self._stations:
+            return self._stations[identifier]
+        path = '/id/%s' % identifier
+        station = self._fetch('station', path, {})
         if station:
             self._stations.setdefault(station['id'], station)
         return station
 
-    def _fetch(self, uri, default):
+    def _fetch(self, variant, path, default):
+        uri = (self._base_uri % variant) + path
         if uri in self._cache:
             logger.debug('Cache hit: %s', uri)
             return self._cache[uri]
 
         if time.time() < self._backoff_until:
-            logger.debug('Back off fallack used: %s', uri)
+            logger.debug('Back off fallback used: %s', uri)
             return default
 
         logger.debug('Fetching: %s', uri)
