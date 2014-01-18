@@ -20,7 +20,8 @@ class Extension(ext.Extension):
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
         schema['api_key'] = config.String()
-        schema['timeout'] = config.Integer()
+        schema['countries'] = config.List(optional=True)
+        schema['timeout'] = config.Integer(minimum=0)
         return schema
 
     def setup(self, registry):

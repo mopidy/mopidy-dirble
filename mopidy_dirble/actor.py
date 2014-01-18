@@ -19,6 +19,7 @@ class DirbleBackend(pykka.ThreadingActor, backend.Backend):
         super(DirbleBackend, self).__init__()
         self.dirble = client.Dirble(config['dirble']['api_key'],
                                     config['dirble']['timeout'])
+        self.countries = config['dirble']['countries']
         self.library = DirbleLibrary(backend=self)
         self.playback = DirblePlayback(audio=audio, backend=self)
 
@@ -34,10 +35,13 @@ class DirbleLibrary(backend.LibraryProvider):
         if variant == 'root':
             for category in self.backend.dirble.categories():
                 result.append(translator.category_to_ref(category))
+            for country in self.backend.countries:
+                result.append(translator.country_to_ref(country))
 
         elif variant == 'category' and identifier:
             for sub_category in self.backend.dirble.sub_categories(identifier):
-                result.append(translator.category_to_ref(sub_category, primary=False))
+                ref = translator.category_to_ref(sub_category, primary=False)
+                result.append(ref)
             for station in self.backend.dirble.stations(identifier):
                 result.append(translator.station_to_ref(station))
 
