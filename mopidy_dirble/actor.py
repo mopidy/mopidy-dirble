@@ -39,13 +39,8 @@ class DirbleLibrary(backend.LibraryProvider):
                 result.append(translator.country_to_ref(country))
 
         elif variant == 'category' and identifier:
-            for sub_category in self.backend.dirble.sub_categories(identifier):
-                ref = translator.category_to_ref(sub_category, primary=False)
-                result.append(ref)
-            for station in self.backend.dirble.stations(identifier):
-                result.append(translator.station_to_ref(station))
-
-        elif variant == 'subcategory' and identifier:
+            for category in self.backend.dirble.categories(identifier):
+                result.append(translator.category_to_ref(category))
             for station in self.backend.dirble.stations(identifier):
                 result.append(translator.station_to_ref(station))
 

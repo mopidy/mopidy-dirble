@@ -25,11 +25,8 @@ def station_to_ref(station):
     return Ref.track(uri=uri, name='%s - %s' % (country, name))
 
 
-def category_to_ref(category, primary=True):
-    if primary:
-        uri = unparse_uri('category', category['id'])
-    else:
-        uri = unparse_uri('subcategory', category['id'])
+def category_to_ref(category):
+    uri = unparse_uri('category', category['id'])
     return Ref.directory(uri=uri, name=category.get('name', uri))
 
 

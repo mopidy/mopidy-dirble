@@ -33,12 +33,12 @@ class Dirble(object):
         self._cache = {}
         self._stations = {}
 
-    def categories(self):
-        return self._fetch('primaryCategories', '', [])
-
-    def sub_categories(self, category):
-        path = '/primaryid/%s' % category
-        return self._fetch('childCategories', path, [])
+    def categories(self, category=None):
+        if category:
+            path = '/primaryid/%s' % category
+            return self._fetch('childCategories', path, [])
+        else:
+            return self._fetch('primaryCategories', '', [])
 
     def stations(self, category):
         path = '/id/%s' % category
@@ -77,7 +77,8 @@ class Dirble(object):
         except urllib2.HTTPError as e:
             logger.debug('Fetch failed, HTTP %s: %s', e.code, e.reason)
             if e.code == 404:
-                return default  # Place marker in cache?
+                self._cache[uri] = default
+                return default
         except IOError as e:
             logger.debug('Fetch failed: %s', e)
         except ValueError as e:
