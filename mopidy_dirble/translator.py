@@ -12,7 +12,7 @@ def unparse_uri(variant, identifier):
 
 
 def parse_uri(uri):
-    result = re.findall(r'^dirble:([a-z]+)(?::(\d+))?$', uri)
+    result = re.findall(r'^dirble:([a-z]+)(?::(\d+|[a-z]{2}))?$', uri)
     if result:
         return result[0]
     return None, None

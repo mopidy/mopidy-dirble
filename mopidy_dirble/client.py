@@ -40,9 +40,16 @@ class Dirble(object):
         else:
             return self._fetch('primaryCategories', '', [])
 
-    def stations(self, category):
-        path = '/id/%s' % category
-        stations = self._fetch('stations', path, [])
+    def stations(self, category=None, country=None):
+        if category and not country:
+            path = '/id/%s' % category
+            stations = self._fetch('stations', path, [])
+        elif country and not category:
+            path = '/country/%s' % country.lower()
+            stations = self._fetch('country', path, [])
+        else:
+            return []
+
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
