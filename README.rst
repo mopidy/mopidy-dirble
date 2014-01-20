@@ -55,8 +55,8 @@ Project resources
 Changelog
 =========
 
-v0.1.0 (UNRELEASED)
-----------------------------------------
+v0.1.0 (2014-01-20)
+-------------------
 
 - Initial release.
 - Provides basic hierarchy based browsing of Dirble categories and sub-categories.
