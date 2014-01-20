@@ -18,7 +18,7 @@ Mopidy-Dirble
    :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=master
    :alt: Test coverage
 
-Mopidy extension for Dirble open radio directory
+`Mopidy <http://www.mopidy.com/>`_ extension for Dirble open radio directory.
 
 
 Installation
@@ -27,6 +27,9 @@ Installation
 Install by running::
 
     pip install Mopidy-Dirble
+
+Or, if available, install the Debian/Ubuntu package from `apt.mopidy.com
+<http://apt.mopidy.com/>`_.
 
 
 Configuration
