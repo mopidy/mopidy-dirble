@@ -55,9 +55,18 @@ Project resources
 Changelog
 =========
 
+v0.1.1 (2014-03-20)
+-------------------
+
+- Change to new API endpoint URL. The old API endpoint will be discontinued
+  2014-05-03.
+
 v0.1.0 (2014-01-20)
 -------------------
 
 - Initial release.
-- Provides basic hierarchy based browsing of Dirble categories and sub-categories.
+
+- Provides basic hierarchy based browsing of Dirble categories and
+  sub-categories.
+
 - Lists user defined countries.

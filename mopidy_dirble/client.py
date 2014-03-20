@@ -21,7 +21,7 @@ class Dirble(object):
       guaranteed to be there.
     """
     def __init__(self, api_key, timeout):
-        self._base_uri = 'http://dirble.com/dirapi/%s/apikey/' + api_key
+        self._base_uri = 'http://api.dirble.com/v1/%s/apikey/' + api_key
         self._cache = {}
         self._stations = {}
         self._timeout = timeout / 1000.0
