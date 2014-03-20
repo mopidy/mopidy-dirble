@@ -55,7 +55,7 @@ Project resources
 Changelog
 =========
 
-v0.1.1 (UNRELEASED)
+v0.1.1 (2014-03-20)
 -------------------
 
 - Change to new API endpoint URL. The old API endpoint will be discontinued
