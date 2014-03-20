@@ -1,3 +1,10 @@
+mopidy-dirble (0.1.1-1) unstable; urgency=low
+
+  * New upstream release to use new API end point. The old API endpoint will
+    be discontinued 2014-05-03.
+
+ -- Stein Magnus Jodal <stein.magnus@jodal.no>  Thu, 20 Mar 2014 20:47:22 +0100
+
 mopidy-dirble (0.1.0-1) unstable; urgency=low
 
   * Initial release.
