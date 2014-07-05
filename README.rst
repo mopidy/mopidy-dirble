@@ -24,12 +24,25 @@ Mopidy-Dirble
 Installation
 ============
 
-Install by running::
+Debian/Ubuntu/Raspbian: Install the ``mopidy-dirble`` package from
+`apt.mopidy.com <http://apt.mopidy.com/>`_::
+
+    sudo apt-get install mopidy-dirble
+
+Arch Linux: Install the ``mopidy-dirble`` package from
+`AUR <https://aur.archlinux.org/packages/mopidy-dirble/>`_::
+
+    sudo yaourt -S mopidy-dirble
+
+OS X: Install the ``mopidy-dirble`` package from the
+`mopidy/mopidy <https://github.com/mopidy/homebrew-mopidy>`_ Homebrew tap::
+
+    brew install mopidy-dirble
+
+Else: Install the dependencies listed above yourself, and then install the
+package from PyPI::
 
     pip install Mopidy-Dirble
-
-Or, if available, install the Debian/Ubuntu package from `apt.mopidy.com
-<http://apt.mopidy.com/>`_.
 
 
 Configuration
