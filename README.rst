@@ -1,20 +1,20 @@
-****************************
+*************
 Mopidy-Dirble
-****************************
+*************
 
-.. image:: https://pypip.in/v/Mopidy-Dirble/badge.png
+.. image:: https://img.shields.io/pypi/v/Mopidy-Dirble.svg?style=flat
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/Mopidy-Dirble/badge.png
+.. image:: https://img.shields.io/pypi/dm/Mopidy-Dirble.svg?style=flat
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/mopidy/mopidy-dirble.png?branch=master
+.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/master.png?style=flat
     :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
 
-.. image:: https://coveralls.io/repos/mopidy/mopidy-dirble/badge.png?branch=master
+.. image:: https://img.shields.io/coveralls/mopidy/mopidy-dirble/master.svg?style=flat
    :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=master
    :alt: Test coverage
 
