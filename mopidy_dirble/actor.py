@@ -2,10 +2,10 @@ from __future__ import unicode_literals
 
 import logging
 
-import pykka
-
 from mopidy import backend
 from mopidy.models import Ref, Track
+
+import pykka
 
 from . import client, translator
 
