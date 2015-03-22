@@ -10,7 +10,7 @@ Mopidy-Dirble
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Number of PyPI downloads
 
-.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/master.png?style=flat
+.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/master.svg?style=flat
     :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
 
