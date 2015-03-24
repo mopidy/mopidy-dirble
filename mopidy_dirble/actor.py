@@ -66,10 +66,10 @@ class DirbleLibrary(backend.LibraryProvider):
 
 
 class DirblePlayback(backend.PlaybackProvider):
-    def change_track(self, track):
-        variant, identifier = translator.parse_uri(track.uri)
+
+    def translate_uri(self, uri):
+        variant, identifier = translator.parse_uri(uri)
         if variant != 'station':
-            return False
+            return None
         station = self.backend.dirble.station(identifier)
-        track = track.copy(uri=station['streamurl'])
-        return super(DirblePlayback, self).change_track(track)
+        return station['streamurl']
