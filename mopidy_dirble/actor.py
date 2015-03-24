@@ -64,12 +64,6 @@ class DirbleLibrary(backend.LibraryProvider):
         ref = translator.station_to_ref(station)
         return [Track(uri=ref.uri, name=ref.name)]
 
-    def find_exact(self, query=None, uris=None):
-        return None
-
-    def search(self, query=None, uris=None):
-        return None
-
 
 class DirblePlayback(backend.PlaybackProvider):
     def change_track(self, track):

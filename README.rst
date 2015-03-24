@@ -72,6 +72,8 @@ v1.0.0 (UNRELEASED)
 
 - Require Mopidy >= 1.0.
 
+- Update to work with new backend search API in Mopidy 1.0.
+
 
 v0.1.1 (2014-03-20)
 -------------------
