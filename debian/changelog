@@ -4,6 +4,7 @@ mopidy-dirble (1.0.0-1) unstable; urgency=medium
   * Update watch file.
   * Update copyright years.
   * Bump Standards-Version to 3.9.6.
+  * Fix dep5-copyright-license-name-not-unique lintian warning.
 
  -- Stein Magnus Jodal <stein.magnus@jodal.no>  Fri, 27 Mar 2015 13:33:16 +0100
 
