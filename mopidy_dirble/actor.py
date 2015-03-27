@@ -2,10 +2,10 @@ from __future__ import unicode_literals
 
 import logging
 
-import pykka
-
 from mopidy import backend
 from mopidy.models import Ref, Track
+
+import pykka
 
 from . import client, translator
 
@@ -64,18 +64,12 @@ class DirbleLibrary(backend.LibraryProvider):
         ref = translator.station_to_ref(station)
         return [Track(uri=ref.uri, name=ref.name)]
 
-    def find_exact(self, query=None, uris=None):
-        return None
-
-    def search(self, query=None, uris=None):
-        return None
-
 
 class DirblePlayback(backend.PlaybackProvider):
-    def change_track(self, track):
-        variant, identifier = translator.parse_uri(track.uri)
+
+    def translate_uri(self, uri):
+        variant, identifier = translator.parse_uri(uri)
         if variant != 'station':
-            return False
+            return None
         station = self.backend.dirble.station(identifier)
-        track = track.copy(uri=station['streamurl'])
-        return super(DirblePlayback, self).change_track(track)
+        return station['streamurl']
