@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-import json
 import logging
 import time
-import urllib2
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +20,13 @@ class Dirble(object):
     - For stations, only the minimal data set returned by station lists is
       guaranteed to be there.
     """
+
+    # TODO: use urllib3 + httpadapter for retry handling:
+    # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+
     def __init__(self, api_key, timeout):
         self._base_uri = 'http://api.dirble.com/v1/%s/apikey/' + api_key
+        self._session = requests.Session()
         self._cache = {}
         self._stations = {}
         self._timeout = timeout / 1000.0
@@ -76,17 +81,21 @@ class Dirble(object):
 
         logger.debug('Fetching: %s', uri)
         try:
-            fp = urllib2.urlopen(uri, timeout=self._timeout)
-            data = json.load(fp)
-            self._cache[uri] = data
-            self._backoff = 1
-            return data
-        except urllib2.HTTPError as e:
-            logger.debug('Fetch failed, HTTP %s: %s', e.code, e.reason)
-            if e.code == 404:
+            resp = self._session.get(uri, timeout=self._timeout)
+
+            if resp.status_code == 200:
+                data = resp.json()
+                self._cache[uri] = data
+                self._backoff = 1
+                return data
+
+            logger.debug('Fetch failed, HTTP %s', resp.status_code)
+
+            if resp.status_code == 404:
                 self._cache[uri] = default
                 return default
-        except IOError as e:
+
+        except requests.exceptions.RequestException as e:
             logger.debug('Fetch failed: %s', e)
         except ValueError as e:
             logger.warning('Fetch failed: %s', e)
