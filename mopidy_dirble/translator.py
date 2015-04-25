@@ -18,11 +18,13 @@ def parse_uri(uri):
     return None, None
 
 
-def station_to_ref(station):
+def station_to_ref(station, show_country=True):
     name = station.get('name').strip()  # TODO: fallback to streams URI?
-    country = station.get('country', '??')
+    if show_country:
+        # TODO: make this a setting so users can set '$name [$country]' etc?
+        name = '%s [%s]' % (name, station.get('country', '??'))
     uri = unparse_uri('station', station['id'])
-    return Ref.track(uri=uri, name='%s - %s' % (country, name))
+    return Ref.track(uri=uri, name=name)
 
 
 def category_to_ref(category):
