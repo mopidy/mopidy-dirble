@@ -67,6 +67,19 @@ Project resources
 Changelog
 =========
 
+v1.1.0 (unreleased)
+-------------------
+
+- Use Requests for accessing the API.
+
+- Update to use new Dirble v2 APIs.
+
+- Add support for station images.
+
+- Add continent/country browsing.
+
+- Stop showing country codes in country folders.
+
 v1.0.0 (2015-03-25)
 -------------------
 
