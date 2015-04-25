@@ -71,6 +71,8 @@ class Dirble(object):
             return self._stations[identifier]
         station = self._fetch('station/%s' % identifier, {})
         if station:
+            if 'id' not in station:
+                station['id'] = identifier
             self._stations.setdefault(station['id'], station)
         return station
 
