@@ -37,11 +37,16 @@ class DirbleLibrary(backend.LibraryProvider):
                 result.append(translator.category_to_ref(category))
             for country in self.backend.countries:
                 result.append(translator.country_to_ref(country))
+            for continent in self.backend.dirble.continents():
+                result.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
             for category in self.backend.dirble.categories(identifier):
                 result.append(translator.category_to_ref(category))
             for station in self.backend.dirble.stations(category=identifier):
                 result.append(translator.station_to_ref(station))
+        elif variant == 'continent' and identifier:
+            for country in self.backend.dirble.countries(identifier):
+                result.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
             for station in self.backend.dirble.stations(country=identifier):
                 result.append(translator.station_to_ref(station))

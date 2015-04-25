@@ -30,6 +30,11 @@ def category_to_ref(category):
     return Ref.directory(uri=uri, name=category.get('title', uri))
 
 
+def continent_to_ref(continent):
+    uri = unparse_uri('continent', continent['id'])
+    return Ref.directory(uri=uri, name=continent['name'])
+
+
 def country_to_ref(country_code):
     uri = unparse_uri('country', country_code.lower())
     try:

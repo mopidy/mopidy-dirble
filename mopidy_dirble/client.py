@@ -74,6 +74,18 @@ class Dirble(object):
             self._stations.setdefault(station['id'], station)
         return station
 
+    def continents(self):
+        return self._fetch('continents', [])
+
+    def countries(self, continent=None):
+        result = []
+        countries = self._fetch('countries', [])
+        continent = int(continent) if continent is not None else None
+        for c in countries:
+            if continent is None or c['Continent_id'] == continent:
+                result.append(c['country_code'])
+        return result
+
     def _fetch(self, path, default):
         uri = self._base_uri + path
         if uri in self._cache:
