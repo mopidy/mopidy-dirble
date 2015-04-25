@@ -41,12 +41,16 @@ class Dirble(object):
         self._stations = {}
 
     def categories(self, category=None):
-        # TODO: use /categories/tree
-        if category:
-            path = 'category/%s/childs' % category
-        else:
-            path = 'categories/primary'
-        return self._fetch(path, [])
+        result = []
+        self._traverse(result, self._fetch('categories/tree', []), category)
+        return result
+
+    def _traverse(self, found, categories, needle):
+        for c in categories:
+            if c['ancestry'] == needle:
+                found.append(c)
+            elif c['children']:
+                self._traverse(found, c['children'], needle)
 
     def stations(self, category=None, country=None):
         if category and not country:
