@@ -25,8 +25,6 @@ class Dirble(object):
     # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
 
     def __init__(self, api_key, timeout):
-        self._base_uri = 'http://api.dirble.com/v1/%s/apikey/' + api_key
-        self._session = requests.Session()
         self._cache = {}
         self._stations = {}
         self._timeout = timeout / 1000.0
@@ -34,27 +32,31 @@ class Dirble(object):
         self._backoff_max = 60
         self._backoff = 1
 
+        self._session = requests.Session()
+        self._session.params = {'token': api_key}
+        self._base_uri = 'http://api.dirble.com/v2/'
+
     def flush(self):
         self._cache = {}
         self._stations = {}
 
     def categories(self, category=None):
+        # TODO: use /categories/tree
         if category:
-            path = '/primaryid/%s' % category
-            return self._fetch('childCategories', path, [])
+            path = 'category/%s/childs' % category
         else:
-            return self._fetch('primaryCategories', '', [])
+            path = 'categories/primary'
+        return self._fetch(path, [])
 
     def stations(self, category=None, country=None):
         if category and not country:
-            path = '/id/%s' % category
-            stations = self._fetch('stations', path, [])
+            path = 'category/%s/stations' % category
         elif country and not category:
-            path = '/country/%s' % country.lower()
-            stations = self._fetch('country', path, [])
+            path = 'countries/%s/stations?all=1' % country.lower()
         else:
             return []
 
+        stations = self._fetch(path, [])
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
@@ -63,14 +65,13 @@ class Dirble(object):
         identifier = int(identifier)  # Ensure we are consistent for cache key.
         if identifier in self._stations:
             return self._stations[identifier]
-        path = '/id/%s' % identifier
-        station = self._fetch('station', path, {})
+        station = self._fetch('station/%s' % identifier, {})
         if station:
             self._stations.setdefault(station['id'], station)
         return station
 
-    def _fetch(self, variant, path, default):
-        uri = (self._base_uri % variant) + path
+    def _fetch(self, path, default):
+        uri = self._base_uri + path
         if uri in self._cache:
             logger.debug('Cache hit: %s', uri)
             return self._cache[uri]

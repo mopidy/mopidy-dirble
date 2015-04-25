@@ -72,4 +72,7 @@ class DirblePlayback(backend.PlaybackProvider):
         if variant != 'station':
             return None
         station = self.backend.dirble.station(identifier)
-        return station['streamurl']
+        for stream in station['streams']:
+            # TODO: add way to pick which variant to use?
+            return stream['stream']
+        return None

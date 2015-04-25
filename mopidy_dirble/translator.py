@@ -4,6 +4,7 @@ import re
 
 from mopidy.models import Ref
 
+# TOOD: replace with v2 api...
 import pycountry
 
 
@@ -19,7 +20,7 @@ def parse_uri(uri):
 
 
 def station_to_ref(station):
-    name = station.get('name', station['streamurl']).strip()
+    name = station.get('name').strip()  # TODO: fallback to streams URI?
     country = station.get('country', '??')
     uri = unparse_uri('station', station['id'])
     return Ref.track(uri=uri, name='%s - %s' % (country, name))
@@ -27,7 +28,7 @@ def station_to_ref(station):
 
 def category_to_ref(category):
     uri = unparse_uri('category', category['id'])
-    return Ref.directory(uri=uri, name=category.get('name', uri))
+    return Ref.directory(uri=uri, name=category.get('title', uri))
 
 
 def country_to_ref(country_code):
