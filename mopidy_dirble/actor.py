@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 
 from mopidy import backend
-from mopidy.models import Ref, Track
+from mopidy.models import Image, Ref, Track
 
 import pykka
 
@@ -68,6 +68,24 @@ class DirbleLibrary(backend.LibraryProvider):
             return []
         ref = translator.station_to_ref(station)
         return [Track(uri=ref.uri, name=ref.name)]
+
+    def get_images(self, uris):
+        result = {}
+        for uri in uris:
+            result[uri] = []
+
+            variant, identifier = translator.parse_uri(uri)
+            if variant != 'station' or not identifier:
+                continue
+
+            station = self.backend.dirble.station(identifier)
+            if not station:
+                continue
+
+            if station['image']['image']['url']:
+                result[uri].append(Image(uri=station['image']['image']['url']))
+
+        return result
 
 
 class DirblePlayback(backend.PlaybackProvider):
