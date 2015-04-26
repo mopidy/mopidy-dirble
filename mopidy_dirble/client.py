@@ -4,7 +4,8 @@ import logging
 import time
 import urllib
 
-import requests
+from requests import Session, exceptions
+from requests.adapters import HTTPAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -13,17 +14,15 @@ class Dirble(object):
     """Light wrapper for Dirble API lookup.
 
     Important things to note:
+    - The client will retry up to three times before giving up for network
+      errors etc.
     - The client will do exponential back off when requests fail or timeout.
     - The client will cache results aggressively.
     - Failed requests will return an empty default type appropriate for the
       lookup in question, normally a empty dict or list.
     - The data returned comes direct from the API's JSON.
-    - For stations, only the minimal data set returned by station lists is
-      guaranteed to be there.
+    - The data is not copied, so beware of modifying what you get back.
     """
-
-    # TODO: use urllib3 + httpadapter for retry handling:
-    # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
 
     def __init__(self, api_key, timeout):
         self._cache = {}
@@ -33,9 +32,11 @@ class Dirble(object):
         self._backoff_max = 60
         self._backoff = 1
 
-        self._session = requests.Session()
-        self._session.params = {'token': api_key}
         self._base_uri = 'http://api.dirble.com/v2/'
+
+        self._session = Session()
+        self._session.params = {'token': api_key}
+        self._session.mount(self._base_uri, HTTPAdapter(max_retries=3))
 
     def flush(self):
         self._cache = {}
@@ -127,7 +128,7 @@ class Dirble(object):
                 self._cache[uri] = default
                 return default
 
-        except requests.exceptions.RequestException as e:
+        except exceptions.RequestException as e:
             logger.debug('Fetch failed: %s', e)
         except ValueError as e:
             logger.warning('Fetch failed: %s', e)
