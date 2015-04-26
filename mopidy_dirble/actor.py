@@ -73,19 +73,31 @@ class DirbleLibrary(backend.LibraryProvider):
         if not query.get('any'):
             return None
 
+        categories = set()
         countries = []
+
         for uri in uris or []:
             variant, identifier = translator.parse_uri(uri)
             if variant == 'country':
                 countries.append(identifier.lower())
             elif variant == 'continent':
                 countries.extend(self.backend.dirble.countries(identifier))
-            # TODO: categories filtering
+            elif variant == 'category':
+                pending = [self.backend.dirble.category(identifier)]
+                while pending:
+                    c = pending.pop(0)
+                    categories.add(c['id'])
+                    pending.extend(c['children'])
 
         tracks = []
         for station in self.backend.dirble.search(' '.join(query['any'])):
-            if not countries or station['country'].lower() in countries:
-                tracks.append(translator.station_to_track(station))
+            if countries and station['country'].lower() not in countries:
+                continue
+            station_categories = {c['id'] for c in station['categories']}
+            if categories and not station_categories.intersection(categories):
+                continue
+            tracks.append(translator.station_to_track(station))
+
         return SearchResult(tracks=tracks)
 
     def get_images(self, uris):
