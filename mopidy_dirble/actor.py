@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 
 from mopidy import backend
-from mopidy.models import Ref, Track
+from mopidy.models import Image, Ref, SearchResult
 
 import pykka
 
@@ -37,14 +37,20 @@ class DirbleLibrary(backend.LibraryProvider):
                 result.append(translator.category_to_ref(category))
             for country in self.backend.countries:
                 result.append(translator.country_to_ref(country))
+            for continent in self.backend.dirble.continents():
+                result.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
-            for category in self.backend.dirble.categories(identifier):
+            for category in self.backend.dirble.subcategories(identifier):
                 result.append(translator.category_to_ref(category))
             for station in self.backend.dirble.stations(category=identifier):
                 result.append(translator.station_to_ref(station))
+        elif variant == 'continent' and identifier:
+            for country in self.backend.dirble.countries(identifier):
+                result.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
             for station in self.backend.dirble.stations(country=identifier):
-                result.append(translator.station_to_ref(station))
+                result.append(
+                    translator.station_to_ref(station, show_country=False))
         else:
             logger.debug('Unknown URI: %s', uri)
 
@@ -61,8 +67,56 @@ class DirbleLibrary(backend.LibraryProvider):
         station = self.backend.dirble.station(identifier)
         if not station:
             return []
-        ref = translator.station_to_ref(station)
-        return [Track(uri=ref.uri, name=ref.name)]
+        return [translator.station_to_track(station)]
+
+    def search(self, query=None, uris=None, exact=False):
+        if not query.get('any'):
+            return None
+
+        categories = set()
+        countries = []
+
+        for uri in uris or []:
+            variant, identifier = translator.parse_uri(uri)
+            if variant == 'country':
+                countries.append(identifier.lower())
+            elif variant == 'continent':
+                countries.extend(self.backend.dirble.countries(identifier))
+            elif variant == 'category':
+                pending = [self.backend.dirble.category(identifier)]
+                while pending:
+                    c = pending.pop(0)
+                    categories.add(c['id'])
+                    pending.extend(c['children'])
+
+        tracks = []
+        for station in self.backend.dirble.search(' '.join(query['any'])):
+            if countries and station['country'].lower() not in countries:
+                continue
+            station_categories = {c['id'] for c in station['categories']}
+            if categories and not station_categories.intersection(categories):
+                continue
+            tracks.append(translator.station_to_track(station))
+
+        return SearchResult(tracks=tracks)
+
+    def get_images(self, uris):
+        result = {}
+        for uri in uris:
+            result[uri] = []
+
+            variant, identifier = translator.parse_uri(uri)
+            if variant != 'station' or not identifier:
+                continue
+
+            station = self.backend.dirble.station(identifier)
+            if not station:
+                continue
+
+            if station['image']['image']['url']:
+                result[uri].append(Image(uri=station['image']['image']['url']))
+
+        return result
 
 
 class DirblePlayback(backend.PlaybackProvider):
@@ -72,4 +126,7 @@ class DirblePlayback(backend.PlaybackProvider):
         if variant != 'station':
             return None
         station = self.backend.dirble.station(identifier)
-        return station['streamurl']
+        for stream in station['streams']:
+            # TODO: add way to pick which variant to use?
+            return stream['stream']
+        return None

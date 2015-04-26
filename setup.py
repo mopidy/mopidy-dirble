@@ -28,6 +28,7 @@ setup(
         'Mopidy >= 1.0',
         'Pykka >= 1.1',
         'pycountry',
+        'requests',
     ],
     test_suite='nose.collector',
     tests_require=[

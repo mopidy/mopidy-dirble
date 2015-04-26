@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
-from mopidy.models import Ref
+from mopidy.models import Ref, Track
 
 import pycountry
 
@@ -18,22 +18,35 @@ def parse_uri(uri):
     return None, None
 
 
-def station_to_ref(station):
-    name = station.get('name', station['streamurl']).strip()
-    country = station.get('country', '??')
+def station_to_ref(station, show_country=True):
+    name = station.get('name').strip()  # TODO: fallback to streams URI?
+    if show_country:
+        # TODO: make this a setting so users can set '$name [$country]' etc?
+        name = '%s [%s]' % (name, station.get('country', '??'))
     uri = unparse_uri('station', station['id'])
-    return Ref.track(uri=uri, name='%s - %s' % (country, name))
+    return Ref.track(uri=uri, name=name)
+
+
+def station_to_track(station):
+    ref = station_to_ref(station)
+    return Track(uri=ref.uri, name=ref.name)
 
 
 def category_to_ref(category):
     uri = unparse_uri('category', category['id'])
-    return Ref.directory(uri=uri, name=category.get('name', uri))
+    return Ref.directory(uri=uri, name=category.get('title', uri))
+
+
+def continent_to_ref(continent):
+    uri = unparse_uri('continent', continent['id'])
+    return Ref.directory(uri=uri, name=continent['name'])
 
 
 def country_to_ref(country_code):
     uri = unparse_uri('country', country_code.lower())
     try:
-        country = pycountry.countries.get(alpha2=country_code.upper())
-        return Ref.directory(uri=uri, name=country.name)
+        # NOTE: /countries doesn't provide names, just codes so we need this.
+        c = pycountry.countries.get(alpha2=country_code.upper())
+        return Ref.directory(uri=uri, name=getattr(c, 'common_name', c.name))
     except KeyError:
         return Ref.directory(uri=uri, name=country_code.upper())
