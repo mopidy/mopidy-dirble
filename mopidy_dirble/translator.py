@@ -46,7 +46,7 @@ def country_to_ref(country_code):
     uri = unparse_uri('country', country_code.lower())
     try:
         # NOTE: /countries doesn't provide names, just codes so we need this.
-        country = pycountry.countries.get(alpha2=country_code.upper())
-        return Ref.directory(uri=uri, name=country.name)
+        c = pycountry.countries.get(alpha2=country_code.upper())
+        return Ref.directory(uri=uri, name=getattr(c, 'common_name', c.name))
     except KeyError:
         return Ref.directory(uri=uri, name=country_code.upper())
