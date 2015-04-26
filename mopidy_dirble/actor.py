@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 
 from mopidy import backend
-from mopidy.models import Image, Ref, Track
+from mopidy.models import Image, Ref
 
 import pykka
 
@@ -66,8 +66,7 @@ class DirbleLibrary(backend.LibraryProvider):
         station = self.backend.dirble.station(identifier)
         if not station:
             return []
-        ref = translator.station_to_ref(station)
-        return [Track(uri=ref.uri, name=ref.name)]
+        return [translator.station_to_track(station)]
 
     def get_images(self, uris):
         result = {}

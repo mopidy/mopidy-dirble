@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
-from mopidy.models import Ref
+from mopidy.models import Ref, Track
 
 import pycountry
 
@@ -25,6 +25,11 @@ def station_to_ref(station, show_country=True):
         name = '%s [%s]' % (name, station.get('country', '??'))
     uri = unparse_uri('station', station['id'])
     return Ref.track(uri=uri, name=name)
+
+
+def station_to_track(station):
+    ref = station_to_ref(station)
+    return Track(uri=ref.uri, name=ref.name)
 
 
 def category_to_ref(category):
