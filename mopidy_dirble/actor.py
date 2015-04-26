@@ -40,7 +40,7 @@ class DirbleLibrary(backend.LibraryProvider):
             for continent in self.backend.dirble.continents():
                 result.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
-            for category in self.backend.dirble.categories(identifier):
+            for category in self.backend.dirble.subcategories(identifier):
                 result.append(translator.category_to_ref(category))
             for station in self.backend.dirble.stations(category=identifier):
                 result.append(translator.station_to_ref(station))
