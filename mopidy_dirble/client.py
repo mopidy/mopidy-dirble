@@ -91,7 +91,7 @@ class Dirble(object):
         continent = int(continent) if continent is not None else None
         for c in countries:
             if continent is None or c['Continent_id'] == continent:
-                result.append(c['country_code'])
+                result.append(c['country_code'].lower())
         return result
 
     def search(self, query):

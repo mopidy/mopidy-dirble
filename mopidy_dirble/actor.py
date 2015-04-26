@@ -78,7 +78,8 @@ class DirbleLibrary(backend.LibraryProvider):
             variant, identifier = translator.parse_uri(uri)
             if variant == 'country':
                 countries.append(identifier.lower())
-            # TODO: continents filtering
+            elif variant == 'continent':
+                countries.extend(self.backend.dirble.countries(identifier))
             # TODO: categories filtering
 
         tracks = []
