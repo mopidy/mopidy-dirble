@@ -49,7 +49,8 @@ class DirbleLibrary(backend.LibraryProvider):
                 result.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
             for station in self.backend.dirble.stations(country=identifier):
-                result.append(translator.station_to_ref(station, False))
+                result.append(
+                    translator.station_to_ref(station, show_country=False))
         else:
             logger.debug('Unknown URI: %s', uri)
 
