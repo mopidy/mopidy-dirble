@@ -67,7 +67,7 @@ Project resources
 Changelog
 =========
 
-v1.1.0 (unreleased)
+v1.1.0 (2015-04-26)
 -------------------
 
 - Use Requests for accessing the API.
@@ -78,7 +78,7 @@ v1.1.0 (unreleased)
 
 - Add continent/country browsing.
 
-- Add basic search support.
+- Add search support.
 
 - Stop showing country codes in country folders.
 
