@@ -4,8 +4,12 @@ import logging
 import time
 import urllib
 
+from mopidy import __version__ as mopidy_version
+
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
+
+from mopidy_dirble import __version__ as dirble_version
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +40,10 @@ class Dirble(object):
 
         self._session = Session()
         self._session.params = {'token': api_key}
+        self._session.headers['User-Agent'] = ' '.join([
+            'Mopidy-Dirble/%s' % dirble_version,
+            'Mopidy/%s' % mopidy_version,
+            self._session.headers['User-Agent']])
         self._session.mount(self._base_uri, HTTPAdapter(max_retries=3))
 
     def flush(self):
