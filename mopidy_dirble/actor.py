@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 
 from mopidy import backend
-from mopidy.models import Image, Ref
+from mopidy.models import Image, Ref, SearchResult
 
 import pykka
 
@@ -67,6 +67,25 @@ class DirbleLibrary(backend.LibraryProvider):
         if not station:
             return []
         return [translator.station_to_track(station)]
+
+    def search(self, query=None, uris=None, exact=False):
+        print query, uris, exact
+        if not query.get('any'):
+            return None
+
+        countries = []
+        for uri in uris or []:
+            variant, identifier = translator.parse_uri(uri)
+            if variant == 'country':
+                countries.append(identifier.lower())
+            # TODO: continents filtering
+            # TODO: categories filtering
+
+        tracks = []
+        for station in self.backend.dirble.search(' '.join(query['any'])):
+            if not countries or station['country'].lower() in countries:
+                tracks.append(translator.station_to_track(station))
+        return SearchResult(tracks=tracks)
 
     def get_images(self, uris):
         result = {}

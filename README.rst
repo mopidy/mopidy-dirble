@@ -78,6 +78,8 @@ v1.1.0 (unreleased)
 
 - Add continent/country browsing.
 
+- Add basic search support.
+
 - Stop showing country codes in country folders.
 
 v1.0.0 (2015-03-25)

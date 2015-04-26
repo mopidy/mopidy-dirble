@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import logging
 import time
+import urllib
 
 import requests
 
@@ -87,6 +88,13 @@ class Dirble(object):
             if continent is None or c['Continent_id'] == continent:
                 result.append(c['country_code'])
         return result
+
+    def search(self, query):
+        quoted_query = urllib.quote(query.encode('utf-8'))
+        stations = self._fetch('search/%s' % quoted_query, [])
+        for station in stations:
+            self._stations.setdefault(station['id'], station)
+        return stations
 
     def _fetch(self, path, default):
         uri = self._base_uri + path
