@@ -69,7 +69,6 @@ class DirbleLibrary(backend.LibraryProvider):
         return [translator.station_to_track(station)]
 
     def search(self, query=None, uris=None, exact=False):
-        print query, uris, exact
         if not query.get('any'):
             return None
 
