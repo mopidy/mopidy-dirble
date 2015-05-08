@@ -67,6 +67,13 @@ Project resources
 Changelog
 =========
 
+v1.2.0 (unreleased)
+-------------------
+
+- Add proxy support for API calls.
+
+- Require Mopidy >= 1.1
+
 v1.1.0 (2015-04-26)
 -------------------
 
