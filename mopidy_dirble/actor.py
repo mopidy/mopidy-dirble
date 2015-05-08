@@ -18,7 +18,8 @@ class DirbleBackend(pykka.ThreadingActor, backend.Backend):
     def __init__(self, config, audio):
         super(DirbleBackend, self).__init__()
         self.dirble = client.Dirble(config['dirble']['api_key'],
-                                    config['dirble']['timeout'])
+                                    config['dirble']['timeout'],
+                                    config['proxy'])
         self.countries = config['dirble']['countries']
         self.library = DirbleLibrary(backend=self)
         self.playback = DirblePlayback(audio=audio, backend=self)

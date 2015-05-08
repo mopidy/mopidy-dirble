@@ -4,7 +4,7 @@ import logging
 import time
 import urllib
 
-from mopidy import __version__ as mopidy_version
+from mopidy import httpclient
 
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
@@ -28,7 +28,7 @@ class Dirble(object):
     - The data is not copied, so beware of modifying what you get back.
     """
 
-    def __init__(self, api_key, timeout):
+    def __init__(self, api_key, timeout, proxy):
         self._cache = {}
         self._stations = {}
         self._timeout = timeout / 1000.0
@@ -40,11 +40,13 @@ class Dirble(object):
 
         self._session = Session()
         self._session.params = {'token': api_key}
-        self._session.headers['User-Agent'] = ' '.join([
-            'Mopidy-Dirble/%s' % dirble_version,
-            'Mopidy/%s' % mopidy_version,
-            self._session.headers['User-Agent']])
         self._session.mount(self._base_uri, HTTPAdapter(max_retries=3))
+        self._session.headers['User-Agent'] = httpclient.format_user_agent(
+            'Mopidy-Dirble/%s' % dirble_version)
+
+        formated_proxy = httpclient.format_proxy(proxy)
+        if formated_proxy:
+            self._session.proxies = {'http': formated_proxy}
 
     def flush(self):
         self._cache = {}
