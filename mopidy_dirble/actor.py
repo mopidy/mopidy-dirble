@@ -127,9 +127,13 @@ class DirblePlayback(backend.PlaybackProvider):
         variant, identifier = translator.parse_uri(uri)
         if variant != 'station':
             return None
+
         station = self.backend.dirble.station(identifier)
+        if not station['streams']:
+            return None
+
+        # TODO: order by bitrate and preferred mime types?
         for stream in station['streams']:
-            # TODO: order by bitrate and preferred mime types?
             if stream['status']:
                 return stream['stream']
-        return None
+        return station['streams'][0]['stream']
