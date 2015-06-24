@@ -67,7 +67,7 @@ Project resources
 Changelog
 =========
 
-v1.1.1 (unreleased)
+v1.1.1 (2015-06-24)
 -------------------
 
 - Updates to match Dirble v2 API changes.
