@@ -129,6 +129,7 @@ class DirblePlayback(backend.PlaybackProvider):
             return None
         station = self.backend.dirble.station(identifier)
         for stream in station['streams']:
-            # TODO: add way to pick which variant to use?
-            return stream['stream']
+            # TODO: order by bitrate and preferred mime types?
+            if stream['status']:
+                return stream['stream']
         return None
