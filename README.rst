@@ -72,7 +72,8 @@ v1.1.1 (unreleased)
 
 - Updates to match Dirble v2 API changes.
 
-- Prefer streams that Dirble says are up. Alternative fix to PR#8.
+- Prefer streams that Dirble says are up. Thanks to Alexander Hartl
+  (@alexhartl) for suggesting the status check in PR#8.
 
 v1.1.0 (2015-04-26)
 -------------------
