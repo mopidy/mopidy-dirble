@@ -110,12 +110,11 @@ class DirbleLibrary(backend.LibraryProvider):
                 continue
 
             station = self.backend.dirble.station(identifier)
-            if not station and 'image' in station['image']:
+            if not station or 'image' not in station:
                 continue
-
-            if station['image'].get('url'):
+            elif station['image'].get('url'):
                 result[uri].append(Image(uri=station['image']['url']))
-            elif station['image']['thumb']['url']:
+            elif station['image'].get('thumb', {}).get('url'):
                 result[uri].append(Image(uri=station['image']['thumb']['url']))
 
         return result
