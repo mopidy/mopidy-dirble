@@ -67,6 +67,11 @@ Project resources
 Changelog
 =========
 
+v1.1.2 (2015-06-25)
+-------------------
+
+- Fix image handling bugs in 1.1.1.
+
 v1.1.1 (2015-06-24)
 -------------------
 
