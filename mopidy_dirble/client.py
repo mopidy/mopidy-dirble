@@ -99,7 +99,7 @@ class Dirble(object):
         countries = self._fetch('countries', [])
         continent = int(continent) if continent is not None else None
         for c in countries:
-            if continent is None or c['Continent_id'] == continent:
+            if continent is None or c['continent_id'] == continent:
                 result.append(c['country_code'].lower())
         return result
 
@@ -125,7 +125,8 @@ class Dirble(object):
             resp = self._session.get(uri, timeout=self._timeout)
 
             if resp.status_code == 200:
-                data = resp.json()
+                data = resp.json(
+                    object_hook=lambda d: {k.lower(): v for k, v in d.items()})
                 self._cache[uri] = data
                 self._backoff = 1
                 return data

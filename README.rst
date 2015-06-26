@@ -67,6 +67,19 @@ Project resources
 Changelog
 =========
 
+v1.1.2 (2015-06-25)
+-------------------
+
+- Fix image handling bugs in 1.1.1.
+
+v1.1.1 (2015-06-24)
+-------------------
+
+- Updates to match Dirble v2 API changes.
+
+- Prefer streams that Dirble says are up. Thanks to Alexander Hartl
+  (@alexhartl) for suggesting the status check in PR#8.
+
 v1.1.0 (2015-04-26)
 -------------------
 

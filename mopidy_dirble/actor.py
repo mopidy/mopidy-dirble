@@ -110,11 +110,12 @@ class DirbleLibrary(backend.LibraryProvider):
                 continue
 
             station = self.backend.dirble.station(identifier)
-            if not station:
+            if not station or 'image' not in station:
                 continue
-
-            if station['image']['image']['url']:
-                result[uri].append(Image(uri=station['image']['image']['url']))
+            elif station['image'].get('url'):
+                result[uri].append(Image(uri=station['image']['url']))
+            elif station['image'].get('thumb', {}).get('url'):
+                result[uri].append(Image(uri=station['image']['thumb']['url']))
 
         return result
 
@@ -125,8 +126,13 @@ class DirblePlayback(backend.PlaybackProvider):
         variant, identifier = translator.parse_uri(uri)
         if variant != 'station':
             return None
+
         station = self.backend.dirble.station(identifier)
+        if not station['streams']:
+            return None
+
+        # TODO: order by bitrate and preferred mime types?
         for stream in station['streams']:
-            # TODO: add way to pick which variant to use?
-            return stream['stream']
-        return None
+            if stream['status']:
+                return stream['stream']
+        return station['streams'][0]['stream']
