@@ -10,12 +10,12 @@ Mopidy-Dirble
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Number of PyPI downloads
 
-.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/master.svg?style=flat
+.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/develop.svg?style=flat
     :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
 
-.. image:: https://img.shields.io/coveralls/mopidy/mopidy-dirble/master.svg?style=flat
-   :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=master
+.. image:: https://img.shields.io/coveralls/mopidy/mopidy-dirble/develop.svg?style=flat
+   :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=develop
    :alt: Test coverage
 
 `Mopidy <http://www.mopidy.com/>`_ extension for Dirble open radio directory.
@@ -61,7 +61,7 @@ Project resources
 
 - `Source code <https://github.com/mopidy/mopidy-dirble>`_
 - `Issue tracker <https://github.com/mopidy/mopidy-dirble/issues>`_
-- `Download development snapshot <https://github.com/mopidy/mopidy-dirble/tarball/master#egg=Mopidy-Dirble-dev>`_
+- `Download development snapshot <https://github.com/mopidy/mopidy-dirble/tarball/develop#egg=Mopidy-Dirble-dev>`_
 
 
 Changelog
