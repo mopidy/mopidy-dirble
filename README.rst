@@ -61,7 +61,6 @@ Project resources
 
 - `Source code <https://github.com/mopidy/mopidy-dirble>`_
 - `Issue tracker <https://github.com/mopidy/mopidy-dirble/issues>`_
-- `Download development snapshot <https://github.com/mopidy/mopidy-dirble/tarball/develop#egg=Mopidy-Dirble-dev>`_
 
 
 Changelog
