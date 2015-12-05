@@ -96,11 +96,12 @@ class Dirble(object):
 
     def countries(self, continent=None):
         result = []
-        countries = self._fetch('countries', [])
-        continent = int(continent) if continent is not None else None
+        if continent:
+            countries = self._fetch('continents/%s/countries' % continent, [])
+        else:
+            countries = self._fetch('countries', [])
         for c in countries:
-            if continent is None or c['continent_id'] == continent:
-                result.append(c['country_code'].lower())
+            result.append(c['country_code'].lower())
         return result
 
     def search(self, query):
