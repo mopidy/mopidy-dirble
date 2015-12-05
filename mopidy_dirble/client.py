@@ -95,14 +95,10 @@ class Dirble(object):
         return self._fetch('continents', [])
 
     def countries(self, continent=None):
-        result = []
         if continent:
-            countries = self._fetch('continents/%s/countries' % continent, [])
+            return self._fetch('continents/%s/countries' % continent, [])
         else:
-            countries = self._fetch('countries', [])
-        for c in countries:
-            result.append(c['country_code'].lower())
-        return result
+            return self._fetch('countries', [])
 
     def search(self, query):
         quoted_query = urllib.quote(query.encode('utf-8'))
