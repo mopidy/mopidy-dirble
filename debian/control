@@ -7,7 +7,6 @@ Build-Depends: debhelper (>= 9),
                mopidy (>= 1.0.8-2),
                python (>= 2.7),
                python-mock,
-               python-pycountry,
                python-pytest,
                python-setuptools,
 Standards-Version: 3.9.6

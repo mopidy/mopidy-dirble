@@ -2,6 +2,7 @@ mopidy-dirble (1.2.0-1) UNRELEASED; urgency=medium
 
   * New upstream release.
   * Update my email address.
+  * Remove Build-Depend on python-pycountry, which is no longer used.
 
  -- Stein Magnus Jodal <jodal@debian.org>  Thu, 10 Dec 2015 01:12:56 +0100
 
