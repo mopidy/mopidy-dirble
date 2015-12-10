@@ -67,6 +67,13 @@ Project resources
 Changelog
 =========
 
+v1.2.0 (2015-12-05)
+-------------------
+
+- Update to account for changes in data from Dirble API. Fixes #11
+
+- pycountry is no longer used as Dirble provides names now.
+
 v1.1.2 (2015-06-25)
 -------------------
 

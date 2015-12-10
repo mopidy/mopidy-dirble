@@ -4,8 +4,6 @@ import re
 
 from mopidy.models import Ref, Track
 
-import pycountry
-
 
 def unparse_uri(variant, identifier):
     return b'dirble:%s:%s' % (variant, identifier)
@@ -42,11 +40,6 @@ def continent_to_ref(continent):
     return Ref.directory(uri=uri, name=continent['name'])
 
 
-def country_to_ref(country_code):
-    uri = unparse_uri('country', country_code.lower())
-    try:
-        # NOTE: /countries doesn't provide names, just codes so we need this.
-        c = pycountry.countries.get(alpha2=country_code.upper())
-        return Ref.directory(uri=uri, name=getattr(c, 'common_name', c.name))
-    except KeyError:
-        return Ref.directory(uri=uri, name=country_code.upper())
+def country_to_ref(country):
+    uri = unparse_uri('country', country['country_code'].lower())
+    return Ref.directory(uri=uri, name=country['name'])
