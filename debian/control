@@ -1,7 +1,7 @@
 Source: mopidy-dirble
 Section: sound
 Priority: optional
-Maintainer: Stein Magnus Jodal <stein.magnus@jodal.no>
+Maintainer: Stein Magnus Jodal <jodal@debian.org>
 Build-Depends: debhelper (>= 9),
                dh-python,
                mopidy (>= 1.0.8-2),
