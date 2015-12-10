@@ -1,3 +1,9 @@
+mopidy-dirble (1.2.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Stein Magnus Jodal <jodal@debian.org>  Thu, 10 Dec 2015 01:12:56 +0100
+
 mopidy-dirble (1.1.2-2) unstable; urgency=medium
 
   * Build-Depend on mopidy, so it doesn't have to be included in
