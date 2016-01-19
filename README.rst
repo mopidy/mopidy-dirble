@@ -63,6 +63,14 @@ Project resources
 - `Issue tracker <https://github.com/mopidy/mopidy-dirble/issues>`_
 
 
+Credits
+=======
+
+- Original author: `Thomas Adamcik <https://github.com/adamcik>`__
+- Current maintainer: `Thomas Adamcik <https://github.com/adamcik>`__
+- `Contributors <https://github.com/mopidy/mopidy-dirble/graphs/contributors>`_
+
+
 Changelog
 =========
 
