@@ -35,12 +35,6 @@ class DirbleLibrary(backend.LibraryProvider):
         if variant == 'root':
             for category in self.backend.dirble.categories():
                 result.append(translator.category_to_ref(category))
-            for country_code in self.backend.countries:
-                country = self.backend.dirble.country(country_code)
-                if country:
-                    result.append(translator.country_to_ref(country))
-                else:
-                    logger.debug('Unknown country: %s', country_code)
             for continent in self.backend.dirble.continents():
                 result.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
@@ -59,10 +53,23 @@ class DirbleLibrary(backend.LibraryProvider):
             logger.debug('Unknown URI: %s', uri)
             return []
 
+        result.sort(key=lambda ref: ref.name)
+
+        # Handle this case after the general ones as we want the user defined
+        # countries be the first entries, and retain their config sort order.
+        if variant == 'root':
+            user_countries = []
+            for country_code in self.backend.countries:
+                country = self.backend.dirble.country(country_code)
+                if country:
+                    user_countries.append(translator.country_to_ref(country))
+                else:
+                    logger.debug('Unknown country: %s', country_code)
+            result = user_countries + result
+
         if not result:
             logger.debug('Did not find any browse results for: %s', uri)
 
-        result.sort(key=lambda ref: ref.name)
         return result
 
     def refresh(self, uri=None):
