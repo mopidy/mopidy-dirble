@@ -35,8 +35,12 @@ class DirbleLibrary(backend.LibraryProvider):
         if variant == 'root':
             for category in self.backend.dirble.categories():
                 result.append(translator.category_to_ref(category))
-            for country in self.backend.countries:
-                result.append(translator.country_to_ref(country))
+            for country_code in self.backend.countries:
+                country = self.backend.dirble.country(country_code)
+                if country:
+                    result.append(translator.country_to_ref(country))
+                else:
+                    logger.debug('Unknown country: %s', country_code)
             for continent in self.backend.dirble.continents():
                 result.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
@@ -45,7 +49,7 @@ class DirbleLibrary(backend.LibraryProvider):
             for station in self.backend.dirble.stations(category=identifier):
                 result.append(translator.station_to_ref(station))
         elif variant == 'continent' and identifier:
-            for country in self.backend.dirble.countries(identifier):
+            for country in self.backend.dirble.countries(continent=identifier):
                 result.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
             for station in self.backend.dirble.stations(country=identifier):
