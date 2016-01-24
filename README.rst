@@ -51,9 +51,14 @@ Before starting Mopidy, you must add configuration for
 Mopidy-Dirble to your Mopidy configuration file::
 
     [dirble]
-    api_key = a4c8107f8fe57c235ce48df846720b9c816e8584
+    api_key = INSERT-YOUR-API-KEY-FROM-DIRBLE-HERE
     countries = US,GB,NO
     timeout = 5000
+
+To get this working you must first go to `Dirble <https://dirble.com>`_ and
+sign up for an account or just login with Facebook or Twitter. Then go to the
+`API keys page <https://dirble.com/users/apikeys>`_ and get your API key.
+The free plan should be more than enough for a typical Mopidy install.
 
 
 Project resources
