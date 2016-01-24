@@ -53,6 +53,10 @@ class DirbleLibrary(backend.LibraryProvider):
                     translator.station_to_ref(station, show_country=False))
         else:
             logger.debug('Unknown URI: %s', uri)
+            return []
+
+        if not result:
+            logger.debug('Did not find any browse results for: %s', uri)
 
         result.sort(key=lambda ref: ref.name)
         return result
