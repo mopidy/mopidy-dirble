@@ -143,9 +143,9 @@ class Dirble(object):
                 return default
 
         except exceptions.RequestException as e:
-            logger.debug('Fetch failed: %s', e)
-        except ValueError as e:
             logger.warning('Fetch failed: %s', e)
+        except ValueError as e:
+            logger.warning('Decoding fetch data failed: %s', e)
 
         self._backoff = min(self._backoff_max, self._backoff*2)
         self._backoff_until = time.time() + self._backoff
