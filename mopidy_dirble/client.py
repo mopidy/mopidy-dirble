@@ -31,6 +31,8 @@ class Dirble(object):
     def __init__(self, api_key, timeout):
         self._cache = {}
         self._stations = {}
+        self._countries = {}
+        self._invalid_token = False
         self._timeout = timeout / 1000.0
         self._backoff_until = time.time()
         self._backoff_max = 60
@@ -49,6 +51,8 @@ class Dirble(object):
     def flush(self):
         self._cache = {}
         self._stations = {}
+        self._countries = {}
+        self._invalid_token = False
 
     def categories(self):
         return self._fetch('categories/tree', [])
@@ -100,6 +104,12 @@ class Dirble(object):
         else:
             return self._fetch('countries', [])
 
+    def country(self, country_code):
+        if not self._countries:
+            for c in self.countries():
+                self._countries[c['country_code'].lower()] = c
+        return self._countries.get(country_code.lower())
+
     def search(self, query):
         quoted_query = urllib.quote(query.encode('utf-8'))
         stations = self._fetch('search/%s' % quoted_query, [])
@@ -108,37 +118,56 @@ class Dirble(object):
         return stations
 
     def _fetch(self, path, default):
+        # Give up right away if we know the token is bad.
+        if self._invalid_token:
+            return default
+
         uri = self._base_uri + path
+
+        # Try and serve request from our cache.
         if uri in self._cache:
             logger.debug('Cache hit: %s', uri)
             return self._cache[uri]
 
+        # Check if we should back of sending queries.
         if time.time() < self._backoff_until:
             logger.debug('Back off fallback used: %s', uri)
             return default
 
-        logger.debug('Fetching: %s', uri)
         try:
+            logger.debug('Fetching: %s', uri)
             resp = self._session.get(uri, timeout=self._timeout)
 
+            # Get succeeded, convert JSON, normalize and return.
             if resp.status_code == 200:
-                data = resp.json(
-                    object_hook=lambda d: {k.lower(): v for k, v in d.items()})
+                normalize_keys = lambda d: {k.lower(): v for k, v in d.items()}
+                data = resp.json(object_hook=normalize_keys)
                 self._cache[uri] = data
                 self._backoff = 1
                 return data
 
-            logger.debug('Fetch failed, HTTP %s', resp.status_code)
-
-            if resp.status_code == 404:
-                self._cache[uri] = default
+            # Special case invalid tokens as there is no point in doing any
+            # further requests.
+            if resp.status_code == 401:
+                logger.error('Dirble API token is not valid, please double '
+                             'check your key or get a new one at dirble.com')
+                self._invalid_token = True
                 return default
 
-        except exceptions.RequestException as e:
-            logger.debug('Fetch failed: %s', e)
-        except ValueError as e:
-            logger.warning('Fetch failed: %s', e)
+            # Don't treat a 404 as an error, just fallback to default value.
+            if resp.status_code == 404:
+                return default
 
+            # Anything else is an error.
+            resp.raise_for_status()
+
+        except exceptions.RequestException as e:
+            logger.warning('Fetching Dirble data failed: %s', e)
+        except ValueError as e:
+            logger.warning('Decoding Dirble data failed: %s', e)
+
+        # If we made it this far something is broken on our side or with the
+        # service, so start backing off sending requests.
         self._backoff = min(self._backoff_max, self._backoff*2)
         self._backoff_until = time.time() + self._backoff
         logger.debug('Entering back off mode for %d seconds.', self._backoff)

@@ -10,12 +10,12 @@ Mopidy-Dirble
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Number of PyPI downloads
 
-.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/master.svg?style=flat
+.. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/develop.svg?style=flat
     :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
 
-.. image:: https://img.shields.io/coveralls/mopidy/mopidy-dirble/master.svg?style=flat
-   :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=master
+.. image:: https://img.shields.io/coveralls/mopidy/mopidy-dirble/develop.svg?style=flat
+   :target: https://coveralls.io/r/mopidy/mopidy-dirble?branch=develop
    :alt: Test coverage
 
 `Mopidy <http://www.mopidy.com/>`_ extension for Dirble open radio directory.
@@ -51,9 +51,14 @@ Before starting Mopidy, you must add configuration for
 Mopidy-Dirble to your Mopidy configuration file::
 
     [dirble]
-    api_key = a4c8107f8fe57c235ce48df846720b9c816e8584
+    api_key = INSERT-YOUR-API-KEY-FROM-DIRBLE-HERE
     countries = US,GB,NO
     timeout = 5000
+
+To get this working you must first go to `Dirble <https://dirble.com>`_ and
+sign up for an account or just login with Facebook or Twitter. Then go to the
+`API keys page <https://dirble.com/users/apikeys>`_ and get your API key.
+The free plan should be more than enough for a typical Mopidy install.
 
 
 Project resources
@@ -61,11 +66,26 @@ Project resources
 
 - `Source code <https://github.com/mopidy/mopidy-dirble>`_
 - `Issue tracker <https://github.com/mopidy/mopidy-dirble/issues>`_
-- `Download development snapshot <https://github.com/mopidy/mopidy-dirble/tarball/master#egg=Mopidy-Dirble-dev>`_
+
+
+Credits
+=======
+
+- Original author: `Thomas Adamcik <https://github.com/adamcik>`__
+- Current maintainer: `Thomas Adamcik <https://github.com/adamcik>`__
+- `Contributors <https://github.com/mopidy/mopidy-dirble/graphs/contributors>`_
 
 
 Changelog
 =========
+
+v1.3.0 (2016-01-25)
+-------------------
+
+- Fix user country handling. Fixes #12
+- Log an error for bad API tokens.
+- Various internal cleanups
+- Removed bad sample API key and added instructions to get your own. Fixes #13
 
 v1.2.0 (2015-12-05)
 -------------------

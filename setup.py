@@ -29,11 +29,6 @@ setup(
         'Pykka >= 1.1',
         'requests',
     ],
-    test_suite='nose.collector',
-    tests_require=[
-        'nose',
-        'mock >= 1.0',
-    ],
     entry_points={
         'mopidy.ext': [
             'dirble = mopidy_dirble:Extension',
