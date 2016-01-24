@@ -31,6 +31,7 @@ class Dirble(object):
     def __init__(self, api_key, timeout):
         self._cache = {}
         self._stations = {}
+        self._countries = {}
         self._timeout = timeout / 1000.0
         self._backoff_until = time.time()
         self._backoff_max = 60
@@ -49,6 +50,7 @@ class Dirble(object):
     def flush(self):
         self._cache = {}
         self._stations = {}
+        self._countries = {}
 
     def categories(self):
         return self._fetch('categories/tree', [])
@@ -99,6 +101,12 @@ class Dirble(object):
             return self._fetch('continents/%s/countries' % continent, [])
         else:
             return self._fetch('countries', [])
+
+    def country(self, country_code):
+        if not self._countries:
+            for c in self.countries():
+                self._countries[c['country_code'].lower()] = c
+        return self._countries.get(country_code.lower())
 
     def search(self, query):
         quoted_query = urllib.quote(query.encode('utf-8'))
