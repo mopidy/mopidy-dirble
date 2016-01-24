@@ -79,6 +79,14 @@ Credits
 Changelog
 =========
 
+v1.3.0 (2016-01-25)
+-------------------
+
+- Fix user country handling. Fixes #12
+- Log an error for bad API tokens.
+- Various internal cleanups
+- Removed bad sample API key and added instructions to get your own. Fixes #13
+
 v1.2.0 (2015-12-05)
 -------------------
 
