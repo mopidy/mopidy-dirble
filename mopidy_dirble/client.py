@@ -135,8 +135,8 @@ class Dirble(object):
             resp = self._session.get(uri, timeout=self._timeout)
 
             if resp.status_code == 200:
-                data = resp.json(
-                    object_hook=lambda d: {k.lower(): v for k, v in d.items()})
+                normalize_keys = lambda d: {k.lower(): v for k, v in d.items()}
+                data = resp.json(object_hook=normalize_keys)
                 self._cache[uri] = data
                 self._backoff = 1
                 return data
