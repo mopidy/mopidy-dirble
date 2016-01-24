@@ -14,6 +14,10 @@ from mopidy_dirble import __version__ as dirble_version
 logger = logging.getLogger(__name__)
 
 
+def _normalize_keys(data):
+    return {k.lower(): v for k, v in data.items()}
+
+
 class Dirble(object):
     """Light wrapper for Dirble API lookup.
 
@@ -140,8 +144,7 @@ class Dirble(object):
 
             # Get succeeded, convert JSON, normalize and return.
             if resp.status_code == 200:
-                normalize_keys = lambda d: {k.lower(): v for k, v in d.items()}
-                data = resp.json(object_hook=normalize_keys)
+                data = resp.json(object_hook=_normalize_keys)
                 self._cache[uri] = data
                 self._backoff = 1
                 return data
