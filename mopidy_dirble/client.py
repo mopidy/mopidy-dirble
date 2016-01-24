@@ -118,22 +118,27 @@ class Dirble(object):
         return stations
 
     def _fetch(self, path, default):
+        # Give up right away if we know the token is bad.
         if self._invalid_token:
-            return default  # Give up right away if we know the token is bad.
+            return default
 
         uri = self._base_uri + path
+
+        # Try and serve request from our cache.
         if uri in self._cache:
             logger.debug('Cache hit: %s', uri)
             return self._cache[uri]
 
+        # Check if we should back of sending queries.
         if time.time() < self._backoff_until:
             logger.debug('Back off fallback used: %s', uri)
             return default
 
-        logger.debug('Fetching: %s', uri)
         try:
+            logger.debug('Fetching: %s', uri)
             resp = self._session.get(uri, timeout=self._timeout)
 
+            # Get succeeded, convert JSON, normalize and return.
             if resp.status_code == 200:
                 normalize_keys = lambda d: {k.lower(): v for k, v in d.items()}
                 data = resp.json(object_hook=normalize_keys)
@@ -149,15 +154,20 @@ class Dirble(object):
                 self._invalid_token = True
                 return default
 
+            # Don't treat a 404 as an error, just fallback to default value.
             if resp.status_code == 404:
-                self._cache[uri] = default
                 return default
 
-        except exceptions.RequestException as e:
-            logger.warning('Fetch failed: %s', e)
-        except ValueError as e:
-            logger.warning('Decoding fetch data failed: %s', e)
+            # Anything else is an error.
+            resp.raise_for_status()
 
+        except exceptions.RequestException as e:
+            logger.warning('Fetching Dirble data failed: %s', e)
+        except ValueError as e:
+            logger.warning('Decoding Dirble data failed: %s', e)
+
+        # If we made it this far something is broken on our side or with the
+        # service, so start backing off sending requests.
         self._backoff = min(self._backoff_max, self._backoff*2)
         self._backoff_until = time.time() + self._backoff
         logger.debug('Entering back off mode for %d seconds.', self._backoff)
