@@ -32,6 +32,7 @@ class Dirble(object):
         self._cache = {}
         self._stations = {}
         self._countries = {}
+        self._invalid_token = False
         self._timeout = timeout / 1000.0
         self._backoff_until = time.time()
         self._backoff_max = 60
@@ -51,6 +52,7 @@ class Dirble(object):
         self._cache = {}
         self._stations = {}
         self._countries = {}
+        self._invalid_token = False
 
     def categories(self):
         return self._fetch('categories/tree', [])
@@ -116,6 +118,9 @@ class Dirble(object):
         return stations
 
     def _fetch(self, path, default):
+        if self._invalid_token:
+            return default  # Give up right away if we know the token is bad.
+
         uri = self._base_uri + path
         if uri in self._cache:
             logger.debug('Cache hit: %s', uri)
@@ -136,7 +141,13 @@ class Dirble(object):
                 self._backoff = 1
                 return data
 
-            logger.debug('Fetch failed, HTTP %s', resp.status_code)
+            # Special case invalid tokens as there is no point in doing any
+            # further requests.
+            if resp.status_code == 401:
+                logger.error('Dirble API token is not valid, please double '
+                             'check your key or get a new one at dirble.com')
+                self._invalid_token = True
+                return default
 
             if resp.status_code == 404:
                 self._cache[uri] = default
