@@ -6,10 +6,6 @@ Mopidy-Dirble
     :target: https://pypi.python.org/pypi/Mopidy-Dirble/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/pypi/dm/Mopidy-Dirble.svg?style=flat
-    :target: https://pypi.python.org/pypi/Mopidy-Dirble/
-    :alt: Number of PyPI downloads
-
 .. image:: https://img.shields.io/travis/mopidy/mopidy-dirble/develop.svg?style=flat
     :target: https://travis-ci.org/mopidy/mopidy-dirble
     :alt: Travis CI build status
