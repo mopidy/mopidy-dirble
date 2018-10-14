@@ -35,7 +35,7 @@ OS X: Install the ``mopidy-dirble`` package from the
 
     brew install mopidy-dirble
 
-Else: Install the the package from PyPI::
+Else: Install the package from PyPI::
 
     pip install Mopidy-Dirble
 
