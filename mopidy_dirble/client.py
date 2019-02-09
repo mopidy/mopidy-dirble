@@ -1,12 +1,13 @@
 from __future__ import unicode_literals
 
 import logging
+import os.path
 import time
 import urllib
 
 from mopidy import __version__ as mopidy_version
 
-from requests import Session, exceptions
+from requests import Request, Session, exceptions
 from requests.adapters import HTTPAdapter
 
 from mopidy_dirble import __version__ as dirble_version
@@ -121,17 +122,19 @@ class Dirble(object):
             self._stations.setdefault(station['id'], station)
         return stations
 
-    def _fetch(self, path, default):
+    def _fetch(self, path, default, params=None, method='GET'):
         # Give up right away if we know the token is bad.
         if self._invalid_token:
             return default
 
-        uri = self._base_uri + path
+        request = Request(
+            method, os.path.join(self._base_uri, path), params=params)
+        prepared = self._session.prepare_request(request)
 
         # Try and serve request from our cache.
-        if uri in self._cache:
-            logger.debug('Cache hit: %s', uri)
-            return self._cache[uri]
+        if prepared.url in self._cache:
+            logger.debug('Cache hit: %s', prepared.url)
+            return self._cache[prepared.url]
 
         # Check if we should back of sending queries.
         if time.time() < self._backoff_until:
@@ -139,13 +142,13 @@ class Dirble(object):
             return default
 
         try:
-            logger.debug('Fetching: %s', uri)
-            resp = self._session.get(uri, timeout=self._timeout)
+            logger.debug('Fetching: %s', prepared.url)
+            resp = self._session.send(prepared, timeout=self._timeout)
 
             # Get succeeded, convert JSON, normalize and return.
             if resp.status_code == 200:
                 data = resp.json(object_hook=_normalize_keys)
-                self._cache[uri] = data
+                self._cache[prepared.url] = data
                 self._backoff = 1
                 return data
 
