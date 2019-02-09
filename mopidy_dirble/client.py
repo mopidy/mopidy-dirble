@@ -42,7 +42,7 @@ class Dirble(object):
         self._backoff_max = 60
         self._backoff = 1
 
-        self._base_uri = 'http://api.dirble.com/v2/'
+        self._base_uri = 'https://api.dirble.com/v2/'
 
         self._session = Session()
         self._session.params = {'token': api_key}
