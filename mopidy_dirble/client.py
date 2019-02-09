@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import logging
 import os.path
 import time
-import urllib
 
 from mopidy import __version__ as mopidy_version
 
@@ -115,9 +114,9 @@ class Dirble(object):
                 self._countries[c['country_code'].lower()] = c
         return self._countries.get(country_code.lower())
 
+    # TODO: support category and country filter + pagination.
     def search(self, query):
-        quoted_query = urllib.quote(query.encode('utf-8'))
-        stations = self._fetch('search/%s' % quoted_query, [])
+        stations = self._fetch('search', [], {'query': query}, 'POST')
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
