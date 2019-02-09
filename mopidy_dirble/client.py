@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-import math
 import logging
+import math
 import os.path
 import time
 
@@ -18,10 +18,10 @@ def _normalize_keys(data):
     return {k.lower(): v for k, v in data.items()}
 
 
-def _paginate(fetch, offset, limit=50):
+def _paginate(fetch, offset, limit, page_size):
     result = []
-    page = int(math.floor((offset or 0) / 30.0))
-    discard = offset - page * 30
+    page = int(math.floor((offset) / float(page_size)))
+    discard = offset - page * page_size
 
     while len(result) < limit + 1:
         tmp = fetch(page)
@@ -91,7 +91,7 @@ class Dirble(object):
         category = self.category(identifier)
         return (category or {}).get('children', [])
 
-    def stations(self, category=None, country=None, offset=0, limit=50):
+    def stations(self, category=None, country=None, offset=None, limit=None):
         if category and not country:
             path = 'category/%s/stations' % category
         elif country and not category:
@@ -102,7 +102,7 @@ class Dirble(object):
         def fetch(page):
             return self._fetch(path, [], {'page': page, 'per_page': 30})
 
-        stations, has_more = _paginate(fetch, offset, limit)
+        stations, has_more = _paginate(fetch, offset or 0, limit or 50, 30)
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
