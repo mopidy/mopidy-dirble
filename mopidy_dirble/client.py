@@ -31,7 +31,7 @@ def _paginate(fetch, offset, limit, page_size):
         page += 1
         discard = 0
 
-    return result[:limit], len(result) > limit
+    return result[:limit], offset + limit if len(result) > limit else None
 
 
 class Dirble(object):
@@ -91,7 +91,7 @@ class Dirble(object):
         category = self.category(identifier)
         return (category or {}).get('children', [])
 
-    def stations(self, category=None, country=None, offset=None, limit=None):
+    def stations(self, category=None, country=None, offset=0, limit=20):
         if category and not country:
             path = 'category/%s/stations' % category
         elif country and not category:
@@ -102,10 +102,10 @@ class Dirble(object):
         def fetch(page):
             return self._fetch(path, [], {'page': page, 'per_page': 30})
 
-        stations, has_more = _paginate(fetch, offset or 0, limit or 50, 30)
+        stations, next_offset = _paginate(fetch, offset, limit, 30)
         for station in stations:
             self._stations.setdefault(station['id'], station)
-        return stations
+        return stations, next_offset
 
     def station(self, identifier):
         identifier = int(identifier)  # Ensure we are consistent for cache key.
@@ -134,7 +134,7 @@ class Dirble(object):
         return self._countries.get(country_code.lower())
 
     def search(
-        self, query, category=None, country=None, offset=None, limit=None):
+        self, query, category=None, country=None, offset=0, limit=20):
 
         def fetch(page):
             params = {'query': query, 'page': page, 'per_page': 30}
@@ -144,10 +144,10 @@ class Dirble(object):
                 params['country'] = country.upper()
             return self._fetch('search', [], params, 'POST')
 
-        stations, has_more = _paginate(fetch, offset or 0, limit or 50, 30)
+        stations, next_offset = _paginate(fetch, offset, limit, 30)
         for station in stations:
             self._stations.setdefault(station['id'], station)
-        return stations
+        return stations, next_offset
 
     def _fetch(self, path, default, params=None, method='GET'):
         # Give up right away if we know the token is bad.

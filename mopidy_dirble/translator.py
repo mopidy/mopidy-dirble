@@ -1,24 +1,28 @@
 from __future__ import unicode_literals
 
+import collections
 import re
 
 from mopidy.models import Ref, Track
 
 
-# TODO: Add the page to this.
-DirbleURI = collections.namedtuple('DirbleURI', ['variant', 'identifier'])
+DirbleURI = collections.namedtuple(
+    'DirbleURI', ['variant', 'identifier', 'offset'])
 
 
-def unparse_uri(variant, identifier, page=None):
+def unparse_uri(variant, identifier, offset=None):
     uri = b'dirble:%s:%s' % (variant, identifier)
-    if page is not None:
-        uri += b':%s' % page
+    if offset is not None:
+        uri += b':%s' % offset
     return uri
 
 
 def parse_uri(uri):
     parts = uri.split(':')
     none = DirbleURI(None, None, None)
+
+    if tuple(parts) == ('dirble', 'root'):
+        return DirbleURI(parts[1], None, None)
 
     if len(parts) not in (3, 4):
         return none
@@ -35,14 +39,15 @@ def parse_uri(uri):
     else:
         return none
 
+    offset = None
     if len(parts) == 4:
         if parts[1] not in ('category', 'country'):
             return none
         if not parts[3].isdigit():
             return none
+        offset = int(parts[3])
 
-    # TOO: Add the page we are on
-    return DirbleURI(parts[1], parts[2])
+    return DirbleURI(parts[1], parts[2], offset)
 
 
 def station_to_ref(station, show_country=True):

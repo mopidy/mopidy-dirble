@@ -29,46 +29,60 @@ class DirbleLibrary(backend.LibraryProvider):
 
     # TODO: add countries when there is a lookup for countries with stations
     def browse(self, uri):
-        result = []
-        variant, identifier = translator.parse_uri(uri)
+        user_countries = []
+        categories = []
+        geographic = []
+        tracks = []
+        limit = 20
+        next_offset = None
+
+        variant, identifier, offset = translator.parse_uri(uri)
 
         if variant == 'root':
             for category in self.backend.dirble.categories():
-                result.append(translator.category_to_ref(category))
+                categories.append(translator.category_to_ref(category))
             for continent in self.backend.dirble.continents():
-                result.append(translator.continent_to_ref(continent))
+                geographic.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
-            for category in self.backend.dirble.subcategories(identifier):
-                result.append(translator.category_to_ref(category))
-            for station in self.backend.dirble.stations(category=identifier):
-                result.append(translator.station_to_ref(station))
+            if not offset:
+                for category in self.backend.dirble.subcategories(identifier):
+                    categories.append(translator.category_to_ref(category))
+            stations, next_offset = self.backend.dirble.stations(
+                category=identifier, offset=offset or 0, limit=limit)
+            for station in stations:
+                tracks.append(translator.station_to_ref(station))
         elif variant == 'continent' and identifier:
             for country in self.backend.dirble.countries(continent=identifier):
-                result.append(translator.country_to_ref(country))
+                geographic.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
-            for station in self.backend.dirble.stations(country=identifier):
-                result.append(
+            stations, next_offset = self.backend.dirble.stations(
+                country=identifier, offset=offset or 0, limit=limit)
+            for station in stations:
+                tracks.append(
                     translator.station_to_ref(station, show_country=False))
         else:
             logger.debug('Unknown URI: %s', uri)
             return []
 
-        result.sort(key=lambda ref: ref.name)
-
-        # Handle this case after the general ones as we want the user defined
-        # countries be the first entries, and retain their config sort order.
         if variant == 'root':
-            user_countries = []
             for country_code in self.backend.countries:
                 country = self.backend.dirble.country(country_code)
                 if country:
                     user_countries.append(translator.country_to_ref(country))
                 else:
                     logger.debug('Unknown country: %s', country_code)
-            result = user_countries + result
+
+        categories.sort(key=lambda ref: ref.name)
+        geographic.sort(key=lambda ref: ref.name)
+
+        result = user_countries + geographic + categories + tracks
 
         if not result:
             logger.debug('Did not find any browse results for: %s', uri)
+
+        if next_offset:
+            next_uri = translator.unparse_uri(variant, identifier, next_offset)
+            result.append(Ref.directory(uri=next_uri, name='Next page'))
 
         return result
 
@@ -76,7 +90,7 @@ class DirbleLibrary(backend.LibraryProvider):
         self.backend.dirble.flush()
 
     def lookup(self, uri):
-        variant, identifier = translator.parse_uri(uri)
+        variant, identifier, _ = translator.parse_uri(uri)
         if variant != 'station':
             return []
         station = self.backend.dirble.station(identifier)
@@ -91,11 +105,14 @@ class DirbleLibrary(backend.LibraryProvider):
         categories = set()
         countries = []
 
+        # TODO: Redo this bit now that dirble can filter by country/category.
         for uri in uris or []:
-            variant, identifier = translator.parse_uri(uri)
+            variant, identifier, _ = translator.parse_uri(uri)
             if variant == 'country':
                 countries.append(identifier.lower())
             elif variant == 'continent':
+                # TODO: This probably fails as we expect lower country code,
+                # not a full country object.
                 countries.extend(self.backend.dirble.countries(identifier))
             elif variant == 'category':
                 pending = [self.backend.dirble.category(identifier)]
@@ -105,7 +122,9 @@ class DirbleLibrary(backend.LibraryProvider):
                     pending.extend(c['children'])
 
         tracks = []
-        for station in self.backend.dirble.search(' '.join(query['any'])):
+        stations, _ = self.backend.dirble.search(
+            ' '.join(query['any']), limit=20)
+        for station in stations:
             if countries and station['country'].lower() not in countries:
                 continue
             station_categories = {c['id'] for c in station['categories']}
@@ -120,7 +139,7 @@ class DirbleLibrary(backend.LibraryProvider):
         for uri in uris:
             result[uri] = []
 
-            variant, identifier = translator.parse_uri(uri)
+            variant, identifier, _ = translator.parse_uri(uri)
             if variant != 'station' or not identifier:
                 continue
 
@@ -138,7 +157,7 @@ class DirbleLibrary(backend.LibraryProvider):
 class DirblePlayback(backend.PlaybackProvider):
 
     def translate_uri(self, uri):
-        variant, identifier = translator.parse_uri(uri)
+        variant, identifier, _ = translator.parse_uri(uri)
         if variant != 'station':
             return None
 
