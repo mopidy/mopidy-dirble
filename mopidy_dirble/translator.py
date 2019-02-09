@@ -5,15 +5,44 @@ import re
 from mopidy.models import Ref, Track
 
 
-def unparse_uri(variant, identifier):
-    return b'dirble:%s:%s' % (variant, identifier)
+# TODO: Add the page to this.
+DirbleURI = collections.namedtuple('DirbleURI', ['variant', 'identifier'])
+
+
+def unparse_uri(variant, identifier, page=None):
+    uri = b'dirble:%s:%s' % (variant, identifier)
+    if page is not None:
+        uri += b':%s' % page
+    return uri
 
 
 def parse_uri(uri):
-    result = re.findall(r'^dirble:([a-z]+)(?::(\d+|[a-z]{2}))?$', uri)
-    if result:
-        return result[0]
-    return None, None
+    parts = uri.split(':')
+    none = DirbleURI(None, None, None)
+
+    if len(parts) not in (3, 4):
+        return none
+
+    if parts[0] != 'dirble':
+        return none
+
+    if parts[1] in ('station', 'category', 'continent'):
+        if not parts[2].isdigit():
+            return none
+    elif parts[1] in ('country'):
+        if len(parts[2]) != 2 or not parts[2].isalpha():
+            return none
+    else:
+        return none
+
+    if len(parts) == 4:
+        if parts[1] not in ('category', 'country'):
+            return none
+        if not parts[3].isdigit():
+            return none
+
+    # TOO: Add the page we are on
+    return DirbleURI(parts[1], parts[2])
 
 
 def station_to_ref(station, show_country=True):
