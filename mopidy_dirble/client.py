@@ -133,11 +133,15 @@ class Dirble(object):
                 self._countries[c['country_code'].lower()] = c
         return self._countries.get(country_code.lower())
 
-    # TODO: support category and country filter.
-    def search(self, query, offset=None, limit=None):
+    def search(
+        self, query, category=None, country=None, offset=None, limit=None):
 
         def fetch(page):
             params = {'query': query, 'page': page, 'per_page': 30}
+            if category is not None:
+                params['category'] = category
+            if country is not None:
+                params['country'] = country.upper()
             return self._fetch('search', [], params, 'POST')
 
         stations, has_more = _paginate(fetch, offset or 0, limit or 50, 30)
