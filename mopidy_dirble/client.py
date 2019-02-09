@@ -91,15 +91,18 @@ class Dirble(object):
         category = self.category(identifier)
         return (category or {}).get('children', [])
 
-    def stations(self, category=None, country=None):
+    def stations(self, category=None, country=None, offset=0, limit=50):
         if category and not country:
             path = 'category/%s/stations' % category
         elif country and not category:
-            path = 'countries/%s/stations?all=1' % country.lower()
+            path = 'countries/%s/stations' % country.lower()
         else:
             return []
 
-        stations = self._fetch(path, [])
+        def fetch(page):
+            return self._fetch(path, [], {'page': page, 'per_page': 30})
+
+        stations, has_more = _paginate(fetch, offset, limit)
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations
