@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import math
 import logging
 import os.path
 import time
@@ -13,9 +14,24 @@ from mopidy_dirble import __version__ as dirble_version
 
 logger = logging.getLogger(__name__)
 
-
 def _normalize_keys(data):
     return {k.lower(): v for k, v in data.items()}
+
+
+def _paginate(fetch, offset, limit=50):
+    result = []
+    page = int(math.floor((offset or 0) / 30.0))
+    discard = offset - page * 30
+
+    while len(result) < limit + 1:
+        tmp = fetch(page)
+        if not tmp:
+            break
+        result.extend(tmp[discard:])
+        page += 1
+        discard = 0
+
+    return result[:limit], len(result) > limit
 
 
 class Dirble(object):
