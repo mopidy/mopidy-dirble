@@ -136,12 +136,14 @@ class Dirble(object):
     def search(
         self, query, category=None, country=None, offset=0, limit=20):
 
+        params = {'query': query, 'per_page': 30}
+        if category is not None:
+            params['category'] = category
+        if country is not None:
+            params['country'] = country.upper()
+
         def fetch(page):
-            params = {'query': query, 'page': page, 'per_page': 30}
-            if category is not None:
-                params['category'] = category
-            if country is not None:
-                params['country'] = country.upper()
+            params['page'] = page
             return self._fetch('search', [], params, 'POST')
 
         stations, next_offset = _paginate(fetch, offset, limit, 30)
