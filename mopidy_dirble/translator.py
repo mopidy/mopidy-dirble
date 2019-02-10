@@ -52,9 +52,9 @@ def parse_uri(uri):
 
 def station_to_ref(station, show_country=True):
     name = station.get('name').strip()  # TODO: fallback to streams URI?
-    if show_country:
+    if show_country and 'country' in station:
         # TODO: make this a setting so users can set '$name [$country]' etc?
-        name = '%s [%s]' % (name, station.get('country', '??'))
+        name = '%s [%s]' % (name, station['country'])
     uri = unparse_uri('station', station['id'])
     return Ref.track(uri=uri, name=name)
 
