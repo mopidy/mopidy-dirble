@@ -102,34 +102,20 @@ class DirbleLibrary(backend.LibraryProvider):
         if not query.get('any'):
             return None
 
-        categories = set()
-        countries = []
-
-        # TODO: Redo this bit now that dirble can filter by country/category.
+        filters = {}
         for uri in uris or []:
             variant, identifier, _ = translator.parse_uri(uri)
             if variant == 'country':
-                countries.append(identifier.lower())
+                filters['country'] = identifier
             elif variant == 'continent':
-                # TODO: This probably fails as we expect lower country code,
-                # not a full country object.
-                countries.extend(self.backend.dirble.countries(identifier))
+                pass
             elif variant == 'category':
-                pending = [self.backend.dirble.category(identifier)]
-                while pending:
-                    c = pending.pop(0)
-                    categories.add(c['id'])
-                    pending.extend(c['children'])
+                filters['category'] = identifier
 
         tracks = []
-        stations, _ = self.backend.dirble.search(
-            ' '.join(query['any']), limit=20)
+        query = ' '.join(query['any'])
+        stations, _ = self.backend.dirble.search(query, limit=20, **filters)
         for station in stations:
-            if countries and station['country'].lower() not in countries:
-                continue
-            station_categories = {c['id'] for c in station['categories']}
-            if categories and not station_categories.intersection(categories):
-                continue
             tracks.append(translator.station_to_track(station))
 
         return SearchResult(tracks=tracks)
