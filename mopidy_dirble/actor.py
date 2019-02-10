@@ -30,13 +30,15 @@ class DirbleLibrary(backend.LibraryProvider):
     # TODO: add countries when there is a lookup for countries with stations
     def browse(self, uri):
         user_countries = []
-        categories = []
         geographic = []
+        categories = []
         tracks = []
-        limit = 20
-        next_offset = None
 
-        variant, identifier, offset = translator.parse_uri(uri)
+        variant, identifier, page = translator.parse_uri(uri)
+
+        limit = 20
+        offset = (page or 0) * limit
+        next_offset = None
 
         if variant == 'root':
             for category in self.backend.dirble.categories():
@@ -44,11 +46,11 @@ class DirbleLibrary(backend.LibraryProvider):
             for continent in self.backend.dirble.continents():
                 geographic.append(translator.continent_to_ref(continent))
         elif variant == 'category' and identifier:
-            if not offset:
+            if not page:
                 for category in self.backend.dirble.subcategories(identifier):
                     categories.append(translator.category_to_ref(category))
             stations, next_offset = self.backend.dirble.stations(
-                category=identifier, offset=offset or 0, limit=limit)
+                category=identifier, offset=offset, limit=limit)
             for station in stations:
                 tracks.append(translator.station_to_ref(station))
         elif variant == 'continent' and identifier:
@@ -56,7 +58,7 @@ class DirbleLibrary(backend.LibraryProvider):
                 geographic.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
             stations, next_offset = self.backend.dirble.stations(
-                country=identifier, offset=offset or 0, limit=limit)
+                country=identifier, offset=offset, limit=limit)
             for station in stations:
                 tracks.append(
                     translator.station_to_ref(station, show_country=False))
@@ -81,7 +83,8 @@ class DirbleLibrary(backend.LibraryProvider):
             logger.debug('Did not find any browse results for: %s', uri)
 
         if next_offset:
-            next_uri = translator.unparse_uri(variant, identifier, next_offset)
+            next_page = int(next_offset / limit)
+            next_uri = translator.unparse_uri(variant, identifier, next_page)
             result.append(Ref.directory(uri=next_uri, name='Next page'))
 
         return result

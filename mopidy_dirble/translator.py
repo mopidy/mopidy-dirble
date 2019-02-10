@@ -7,7 +7,7 @@ from mopidy.models import Ref, Track
 
 
 DirbleURI = collections.namedtuple(
-    'DirbleURI', ['variant', 'identifier', 'offset'])
+    'DirbleURI', ['variant', 'identifier', 'page'])
 
 
 def unparse_uri(variant, identifier, offset=None):
