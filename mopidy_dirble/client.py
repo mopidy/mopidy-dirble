@@ -24,10 +24,10 @@ def _paginate(fetch, offset, limit, page_size):
     discard = offset - page * page_size
 
     while len(result) < limit + 1:
-        tmp = fetch(page)
-        if not tmp:
+        fetched = fetch(page)
+        result.extend(fetched[discard:])
+        if len(fetched) < page_size:
             break
-        result.extend(tmp[discard:])
         page += 1
         discard = 0
 
