@@ -10,10 +10,10 @@ DirbleURI = collections.namedtuple(
     'DirbleURI', ['variant', 'identifier', 'page'])
 
 
-def unparse_uri(variant, identifier, offset=None):
+def unparse_uri(variant, identifier, page=None):
     uri = b'dirble:%s:%s' % (variant, identifier)
-    if offset is not None:
-        uri += b':%s' % offset
+    if page is not None:
+        uri += b':%s' % page
     return uri
 
 
