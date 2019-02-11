@@ -14,13 +14,14 @@ from mopidy_dirble import __version__ as dirble_version
 
 logger = logging.getLogger(__name__)
 
+
 def _normalize_keys(data):
     return {k.lower(): v for k, v in data.items()}
 
 
-def _paginate(fetch, offset, limit, page_size):
+def _repaginate(fetch, offset, limit, page_size):
     result = []
-    page = int(math.floor((offset) / float(page_size)))
+    page = int(math.floor(offset / float(page_size)))
     discard = offset - page * page_size
 
     while len(result) < limit + 1:
@@ -102,7 +103,7 @@ class Dirble(object):
         def fetch(page):
             return self._fetch(path, [], {'page': page, 'per_page': 30})
 
-        stations, next_offset = _paginate(fetch, offset, limit, 30)
+        stations, next_offset = _repaginate(fetch, offset, limit, 30)
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations, next_offset
@@ -146,7 +147,7 @@ class Dirble(object):
             params['page'] = page
             return self._fetch('search', [], params, 'POST')
 
-        stations, next_offset = _paginate(fetch, offset, limit, 30)
+        stations, next_offset = _repaginate(fetch, offset, limit, 30)
         for station in stations:
             self._stations.setdefault(station['id'], station)
         return stations, next_offset
