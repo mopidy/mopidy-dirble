@@ -85,7 +85,8 @@ class DirbleLibrary(backend.LibraryProvider):
         if next_offset:
             next_page = int(next_offset / limit)
             next_uri = translator.unparse_uri(variant, identifier, next_page)
-            result.append(Ref.directory(uri=next_uri, name='Next page'))
+            result.append(
+                Ref.directory(uri=next_uri, name='Page %d' % (next_page + 1)))
 
         return result
 
