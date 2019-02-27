@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import collections
-import re
 
 from mopidy.models import Ref, Track
 
