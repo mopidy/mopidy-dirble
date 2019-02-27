@@ -39,6 +39,7 @@ class DirbleLibrary(backend.LibraryProvider):
         limit = 20
         offset = (page or 0) * limit
         next_offset = None
+        next_name = None
 
         if variant == 'root':
             for category in self.backend.dirble.categories():
@@ -49,6 +50,7 @@ class DirbleLibrary(backend.LibraryProvider):
             if not page:
                 for category in self.backend.dirble.subcategories(identifier):
                     categories.append(translator.category_to_ref(category))
+            next_name = self.backend.dirble.category(identifier)['title']
             stations, next_offset = self.backend.dirble.stations(
                 category=identifier, offset=offset, limit=limit)
             for station in stations:
@@ -57,6 +59,7 @@ class DirbleLibrary(backend.LibraryProvider):
             for country in self.backend.dirble.countries(continent=identifier):
                 geographic.append(translator.country_to_ref(country))
         elif variant == 'country' and identifier:
+            next_name = self.backend.dirble.country(identifier)['name']
             stations, next_offset = self.backend.dirble.stations(
                 country=identifier, offset=offset, limit=limit)
             for station in stations:
@@ -85,8 +88,8 @@ class DirbleLibrary(backend.LibraryProvider):
         if next_offset:
             next_page = int(next_offset / limit)
             next_uri = translator.unparse_uri(variant, identifier, next_page)
-            result.append(
-                Ref.directory(uri=next_uri, name='Page %d' % (next_page + 1)))
+            next_name += ' page %d' % (next_page + 1)
+            result.append(Ref.directory(uri=next_uri, name=next_name))
 
         return result
 
