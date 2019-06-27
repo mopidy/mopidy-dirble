@@ -28,7 +28,7 @@ Debian/Ubuntu/Raspbian: Install the ``mopidy-dirble`` package from
 Arch Linux: Install the ``mopidy-dirble`` package from
 `AUR <https://aur.archlinux.org/packages/mopidy-dirble/>`_::
 
-    sudo yaourt -S mopidy-dirble
+    sudo yay -S mopidy-dirble
 
 OS X: Install the ``mopidy-dirble`` package from the
 `mopidy/mopidy <https://github.com/mopidy/homebrew-mopidy>`_ Homebrew tap::
