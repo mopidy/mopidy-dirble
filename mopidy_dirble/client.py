@@ -134,9 +134,7 @@ class Dirble(object):
                 self._countries[c['country_code'].lower()] = c
         return self._countries.get(country_code.lower())
 
-    def search(
-        self, query, category=None, country=None, offset=0, limit=20):
-
+    def search(self, query, category=None, country=None, offset=0, limit=20):
         params = {'query': query, 'per_page': 30}
         if category is not None:
             params['category'] = category
@@ -168,7 +166,7 @@ class Dirble(object):
 
         # Check if we should back of sending queries.
         if time.time() < self._backoff_until:
-            logger.debug('Back off fallback used: %s', uri)
+            logger.debug('Back off fallback used: %s', prepared.url)
             return default
 
         try:
