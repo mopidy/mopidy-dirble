@@ -17,6 +17,15 @@ Mopidy-Dirble
 `Mopidy <http://www.mopidy.com/>`_ extension for Dirble open radio directory.
 
 
+WARNING
+=======
+
+As of November 2019, **the dirble.com service is no longer operational.** Thus,
+the maintenance of this extension has been stopped. The ``mopidy-dirble``
+package has been removed from Homebrew and Debian/Ubuntu, and the Git repo is
+put into archive mode.
+
+
 Installation
 ============
 
